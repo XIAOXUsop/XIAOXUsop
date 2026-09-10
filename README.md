@@ -25,7 +25,7 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 ## 精选项目
 
-### 🏦 amlagent — 商业银行智能反洗钱（AML）尽调 Agent 平台
+### 🏦 [amlagent](https://github.com/XIAOXUsop/amlagent) — 商业银行智能反洗钱（AML）尽调 Agent 平台
 
 `Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI ✅ · MIT
 
@@ -39,6 +39,8 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
   命名，属性涵盖 `gen_ai.usage.*` / `gen_ai.response.finish_reasons` 等，
   接入任意 OTel 后端无需私有埋点；**span 只记元数据，绝不写入 prompt 或补全内容**
 
+**上手**：`docker compose up` 一键起全栈（后端 + 前端 + MySQL + Redis + PGVector + Prometheus/Grafana）。
+
 **已验证的数据**（详见仓库内评测报告）
 
 | 评测项 | 结果 |
@@ -50,7 +52,7 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 > 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 
-### 🔌 desensitize-spring-boot-starter — 敏感数据防护（脱敏 + 可逆假名化）
+### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
 
 `Java 21` `Spring Boot 3` `Jackson` `HMAC` · CI ✅ · MIT
 
@@ -63,7 +65,9 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 - 未知令牌保持原样而非猜测性替换；默认关闭，缺密钥在**启动期失败**而不是产出弱令牌
 - **35 项测试**（含两组 `ApplicationContextRunner` 自动配置集成测试）
 
-### 🛡️ aml-compliance-checker — IDEA 敏感数据合规插件
+**上手**：下载 [jar](https://github.com/XIAOXUsop/desensitize-spring-boot-starter/releases/latest) 装进本地仓库，加 `@Sensitive` 注解即可，零配置。
+
+### 🛡️ [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) — IDEA 敏感数据合规插件
 
 `Kotlin` `IntelliJ Platform SDK` · CI ✅ · Apache-2.0
 
@@ -76,7 +80,9 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 - 每条告警写清判定依据，用户可自行分辨真泄漏与误报；无上下文时不猜测
 - **28 项测试**
 
-### 📚 fsc-examples — LangChain4j 金融合规示例集
+**上手**：下载 [zip](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest)，IDEA 里 `Install Plugin from Disk` 即可。
+
+### 📚 [fsc-examples](https://github.com/XIAOXUsop/fsc-examples) — LangChain4j 金融合规示例集
 
 `Java 21` `LangChain4j` `MCP` `JUnit 5` · CI ✅ · MIT
 
@@ -90,11 +96,45 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 - Mock-first：无 API Key、无需联网即可全链路跑通，便于上手与进 CI
 - **14 项测试**（含双轨评测与 MCP 协议握手）
 
+**上手**：`mvn -pl fsc-cases test` —— 无需 API Key、无需联网即可全链路跑通。
+
+### 🗜️ [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Agent 上下文压缩引擎
+
+`Java 21` `Context Engineering` · CI ✅ · MIT
+
+> 在工具输出、日志、RAG 片段进入 LLM 之前，按你给出的 token 预算压缩它们——
+> **确定性、可审计、可逆**。
+
+- **压缩量由预算决定，不是一个固定数字**：内容放得下时**完全不动**；
+  只超出一点时只丢一点（同一份日志：给 60000 预算丢 6.7%，给 2000 才丢 96.5%）
+- **可逆**：压掉的原文进内容寻址归档，且**归档引用被写进压缩内容本身**——
+  读到这段内容的模型自己就知道有东西被省略、以及怎么要回来
+- **不调用模型**：同输入必然同输出（可写断言测试）、零增量成本、不会引入原文没有的事实
+
+**上手**：下载 [ctxpress.jar](https://github.com/XIAOXUsop/ctxpress/releases/latest) → `java -jar ctxpress.jar analyze --max-tokens 8000 app.log`
+
+### 🛰️ [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) — MCP 工具面 lockfile
+
+`Java 21` `MCP` `Security` · CI ✅ · MIT
+
+> 把 MCP 服务器的工具定义锁下来、提交进版本库，让"配置被悄悄改了"像"代码被改了"
+> 一样出现在 diff 与评审里。
+
+- 针对 **rug pull**：名字与 schema 都不变、只悄悄改描述。扫描器每次拿到的都是当前版本，
+  **没有历史对照就发现不了**——这不是"规则多少"的差别，而是"有没有基线"的差别
+- 输出 **SARIF 2.1.0**，发现以行内注解出现在 PR 上；退出码可作 CI 门禁
+- **完全离线**（对比 snyk / cisco 的 MCP 扫描器需要云 API 或 LLM Key），
+  且它们目前都不做基线漂移——互补而非替代
+
+**上手**：下载 [mcp-sentinel.jar](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest) → `java -jar mcp-sentinel.jar lock --config mcp.json`
+
 ## 工程习惯
 
 - **每个项目都配 CI + 单元测试 + 开源协议**，构建产物不进仓库
 - **可复现优先**：评测结果落盘 JSON，数据集带冻结标识与版本要素
 - **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力
+- **产物可获取**：每个项目都发 GitHub Release 并附可直接运行的产物——
+  「下载就能用」比「clone 下来自己构建」的门槛低一个数量级
 
 ## GitHub 数据
 
