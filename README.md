@@ -57,7 +57,7 @@
 ## 📈 深度数据面板（每日自动生成）
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/main/metrics.svg" alt="Metrics"/>
+  <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/main/github-metrics.svg" alt="Metrics"/>
 </div>
 
 ## 🐍 活跃度贪吃蛇
