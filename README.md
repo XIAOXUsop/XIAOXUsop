@@ -1,18 +1,19 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4A9EFF,100:C9A961&height=220&section=header&text=XIAOXUsop&fontSize=52&fontAlignY=32&desc=Java%20后端%20%C2%B7%20智能%20Agent%20应用%20%C2%B7%20自研插件与工具&descSize=18&descAlignY=52&anim=fade" alt="header"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4A9EFF,100:C9A961&height=200&section=header&text=XIAOXUsop&fontSize=50&fontAlignY=34&desc=Java%20%E5%90%8E%E7%AB%AF%20%C2%B7%20%E6%99%BA%E8%83%BD%20Agent%20%E5%BA%94%E7%94%A8%20%C2%B7%20%E8%87%AA%E7%A0%94%E6%8F%92%E4%BB%B6%E4%B8%8E%E5%B7%A5%E5%85%B7&descSize=17&descAlignY=54&anim=fade" alt="header"/>
 </div>
 
 <div align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1200&color=4A9EFF&center=true&vCenter=true&width=560&lines=%E4%B8%93%E6%B3%A8%E4%BA%8E+Java+%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91;%E6%99%BA%E8%83%BD+Agent+%E5%BA%94%E7%94%A8%E5%B7%A5%E7%A8%8B%E5%8C%96;%E8%87%AA%E7%A0%94%E5%B7%A5%E5%85%B7%E4%B8%8E%E5%8A%9F%E8%83%BD%E6%8F%92%E4%BB%B6;%E7%94%A8%E4%BB%A3%E7%A0%81%E8%A7%A3%E5%86%B3%E5%AE%9E%E9%99%85%E9%97%AE%E9%A2%98" alt="typing"/>
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=21&pause=1200&color=4A9EFF&center=true&vCenter=true&width=600&lines=%E4%B8%8D%E6%BB%A1%E8%B6%B3%E4%BA%8E%E2%80%9C%E6%8A%8A%E6%A8%A1%E5%9E%8B%E8%B7%91%E9%80%9A%E2%80%9D%EF%BC%8C%E8%A6%81%E6%B1%82%E5%8F%AF%E8%AF%84%E6%B5%8B%E3%80%81%E5%8F%AF%E8%BF%BD%E6%BA%AF%E3%80%81%E5%8F%AF%E6%81%A2%E5%A4%8D;%E6%AF%8F%E4%B8%AA%E7%BB%93%E8%AE%BA%E9%83%BD%E8%A6%81%E6%9C%89%E6%95%B0%E6%8D%AE%E6%94%AF%E6%92%91" alt="typing"/>
 </div>
 
-## 🚀 当前专注方向
+## 我是谁
 
-- 🧠 **智能 Agent 应用** — 自研 AML Agent 平台（商业银行智能反洗钱尽调）
-- 🔌 **自研插件 & 工具** — 从需求到落地的完整开发闭环
-- ☕ **Java 生态** — Spring Boot · Spring Cloud · 持续跟进最新版本特性
+Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 / 插件**。
 
-## ⚙️ 技术栈
+我做事的判断标准不是"功能跑通了"，而是 **可评测、可追溯、可恢复、可观测**——
+每条风险结论都要能引用到法规证据，每个性能数字都要能复现。
+
+## 技术栈
 
 <div align="center">
 
@@ -22,47 +23,66 @@
 
 </div>
 
-<details>
-<summary><b>展开完整技能清单</b></summary>
+## 精选项目
 
-### 语言
-![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
-![SQL](https://img.shields.io/badge/SQL-4479A1?logo=mysql&logoColor=white)
-![Shell](https://img.shields.io/badge/Shell-121011?logo=gnu-bash&logoColor=white)
+### 🏦 amlagent — 商业银行智能反洗钱（AML）尽调 Agent 平台
 
-### 后端框架
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?logo=spring-boot)
-![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-6DB33F?logo=spring&logoColor=white)
-![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?logo=spring-security&logoColor=white)
-![JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?logo=spring&logoColor=white)
+`Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI ✅ · MIT
 
-### 工具 & 平台
-![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
-![Maven](https://img.shields.io/badge/Maven-C71A36?logo=apachemaven&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)
+> 接收反洗钱预警工单后，可靠地调度 Agent 工作流，自动完成交易画像、股权穿透、制裁名单筛查、
+> 监管法规检索、风险研判与结构化报告生成；用**独立于大模型的护栏**校验结论，高风险工单转人工复核闭环。
 
-</details>
+- **可靠任务** — Transactional Outbox + Redis Streams，含幂等、重试、死信、租约 fencing、崩溃恢复
+- **证据追溯** — 混合 RAG（向量 + 中文词法 + 加权 RRF + 精排），结论必须引用 `evidenceId`
+- **安全护栏** — 配置化规则 DSL；Prompt 注入三层防护；一级制裁强制 HIGH 并转人工
+- **可观测** — Prometheus / Grafana 指标，traceId 全链路透传
 
-## 🏆 GitHub 成就
+**已验证的数据**（详见仓库内评测报告）
 
-<div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=XIAOXUsop&theme=onedark&no-frame=true&column=8&margin-w=8&no-bg=true" alt="trophy"/>
-</div>
+| 评测项 | 结果 |
+|---|---|
+| RAG 法规检索 Recall@5 | **93.3%** → 接入 bge 精排 **100%**（nDCG@5 96.7%，无答案拒答 100%） |
+| DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV，多轮迭代基线） |
+| 一级制裁规则漏报 | **0 / 5** |
+| 测试 | 后端 242 项单测 · 22 项集成回归 · 前端 15 项 |
 
-## 🌟 精选项目
+> 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 
-### 🏦 [amlagent](https://github.com/XIAOXUsop/amlagent) — 商业银行智能反洗钱尽调 Agent 平台
-`Java` `Spring Boot` `Agent` `金融科技`
+### 🔌 desensitize-spring-boot-starter — 注解式敏感数据脱敏
 
-> 自主研发的智能反洗钱尽职调查平台，融合大模型 Agent 能力，辅助银行完成客户尽调流程的智能化升级。
+`Java 21` `Spring Boot 3` `Jackson` · CI ✅ · MIT
 
-- 🤖 Agent 驱动的尽调流程自动化
-- 📊 面向金融合规场景的智能化分析
-- 🛠️ 从 0 到 1 独立设计开发
+> 一个 `@Sensitive` 注解把脱敏下沉到 **Jackson 序列化层**，业务代码零侵入；
+> 数据库里仍是原值，只在对外输出的那一刻掩码。
 
-## 📊 GitHub 数据
+8 种内置脱敏类型 · 字段与 getter 均可标注 · 嵌套对象与集合自动生效 · 占位字符可配置
+**19 项测试**，含 `ApplicationContextRunner` 自动配置集成测试
+
+### 🛡️ aml-compliance-checker — IDEA 敏感数据合规插件
+
+`Kotlin` `IntelliJ Platform SDK` · CI ✅ · Apache-2.0
+
+> 在 Java 注释与字符串字面量中检出身份证 / 银行卡 / 手机号明文，**一键替换为等长脱敏值**。
+
+身份证做 ISO 7064 MOD 11-2 校验位验证、银行卡做 Luhn 校验，订单流水号不会误报；
+报警文案只显示短预览。**17 项测试**。
+
+### 📚 fsc-examples — LangChain4j 金融合规示例集
+
+`Java 21` `LangChain4j` `JUnit 5` · CI ✅ · MIT
+
+> 用 `AiServices` + `@Tool` + 法规 RAG 跑通一条 AML 尽调 Agent 链路，
+> 并给出**确定性护栏**与**双轨评测**（原始模型分 vs 护栏修正后分）。
+
+Mock-first：无 API Key、无需联网即可全链路跑通，便于上手与进 CI。
+
+## 工程习惯
+
+- **每个项目都配 CI + 单元测试 + 开源协议**，构建产物不进仓库
+- **可复现优先**：评测结果落盘 JSON，数据集带冻结标识与版本要素
+- **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力
+
+## GitHub 数据
 
 <p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=XIAOXUsop&show_icons=true&theme=synthwave&hide_border=true&count_private=true" alt="GitHub Stats" height="165"/>
@@ -74,29 +94,17 @@
 </div>
 
 <div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=XIAOXUsop&theme=synthwave&hide_border=true&bg_color=0D1117" alt="活动图"/>
-</div>
-
-## 📈 深度数据面板（每日自动生成）
-
-<div align="center">
   <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/main/github-metrics.svg" alt="Metrics"/>
 </div>
 
-## 🐍 活跃度贪吃蛇
+<div align="center">
+  <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/output/github-contribution-grid-snake-dark.svg" alt="Snake animation"/>
+</div>
 
-![Snake animation](https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/output/github-contribution-grid-snake-dark.svg)
-
-## 📫 联系我
+## 联系
 
 - GitHub: [@XIAOXUsop](https://github.com/XIAOXUsop)
 
----
-
 <div align="center">
-  <img src="https://komarev.com/ghpvc/?username=XIAOXUsop&style=for-the-badge&label=访客数" alt="访客计数"/>
-</div>
-
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:C9A961,100:4A9EFF&height=110&section=footer" alt="footer"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:C9A961,100:4A9EFF&height=100&section=footer" alt="footer"/>
 </div>
