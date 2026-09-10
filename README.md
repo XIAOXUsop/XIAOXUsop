@@ -54,6 +54,12 @@
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=XIAOXUsop&theme=synthwave&hide_border=true&bg_color=0D1117" alt="活动图"/>
 </div>
 
+## 📈 深度数据面板（每日自动生成）
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/main/metrics.svg" alt="Metrics"/>
+</div>
+
 ## 🐍 活跃度贪吃蛇
 
 ![Snake animation](https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/output/github-contribution-grid-snake-dark.svg)
