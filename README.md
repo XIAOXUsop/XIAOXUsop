@@ -69,12 +69,16 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 ### 📚 fsc-examples — LangChain4j 金融合规示例集
 
-`Java 21` `LangChain4j` `JUnit 5` · CI ✅ · MIT
+`Java 21` `LangChain4j` `MCP` `JUnit 5` · CI ✅ · MIT
 
 > 用 `AiServices` + `@Tool` + 法规 RAG 跑通一条 AML 尽调 Agent 链路，
-> 并给出**确定性护栏**与**双轨评测**（原始模型分 vs 护栏修正后分）。
+> 给出**确定性护栏**与**双轨评测**（原始模型分 vs 护栏修正后分），
+> 并通过 **MCP（Model Context Protocol）** 把同一套工具面开放给任意 MCP 客户端。
 
-Mock-first：无 API Key、无需联网即可全链路跑通，便于上手与进 CI。
+- **Agent 与 MCP 共用同一份工具实现**，不存在演示与生产两套逻辑
+- 协议层有真实握手测试：把服务作为独立子进程拉起，走完
+  `initialize → tools/list → tools/call` 全程 JSON-RPC
+- Mock-first：无 API Key、无需联网即可全链路跑通，便于上手与进 CI
 
 ## 工程习惯
 
