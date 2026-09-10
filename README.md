@@ -35,7 +35,9 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 - **可靠任务** — Transactional Outbox + Redis Streams，含幂等、重试、死信、租约 fencing、崩溃恢复
 - **证据追溯** — 混合 RAG（向量 + 中文词法 + 加权 RRF + 精排），结论必须引用 `evidenceId`
 - **安全护栏** — 配置化规则 DSL；Prompt 注入三层防护；一级制裁强制 HIGH 并转人工
-- **可观测** — Prometheus / Grafana 指标，traceId 全链路透传
+- **可观测** — Prometheus 指标 + **OpenTelemetry GenAI 语义约定**追踪：span 按 `chat {模型}`
+  命名，属性涵盖 `gen_ai.usage.*` / `gen_ai.response.finish_reasons` 等，
+  接入任意 OTel 后端无需私有埋点；**span 只记元数据，绝不写入 prompt 或补全内容**
 
 **已验证的数据**（详见仓库内评测报告）
 
@@ -48,24 +50,31 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 > 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 
-### 🔌 desensitize-spring-boot-starter — 注解式敏感数据脱敏
+### 🔌 desensitize-spring-boot-starter — 敏感数据防护（脱敏 + 可逆假名化）
 
-`Java 21` `Spring Boot 3` `Jackson` · CI ✅ · MIT
+`Java 21` `Spring Boot 3` `Jackson` `HMAC` · CI ✅ · MIT
 
-> 一个 `@Sensitive` 注解把脱敏下沉到 **Jackson 序列化层**，业务代码零侵入；
-> 数据库里仍是原值，只在对外输出的那一刻掩码。
+> 两层能力：**接口返回值脱敏**（`@Sensitive` 注解，Jackson 序列化层，业务零侵入），
+> 以及 **大模型输入输出脱敏**——发送前把敏感值换成确定性令牌，收到回复后自动还原。
 
-8 种内置脱敏类型 · 字段与 getter 均可标注 · 嵌套对象与集合自动生效 · 占位字符可配置
-**19 项测试**，含 `ApplicationContextRunner` 自动配置集成测试
+- 掩码解决不了大模型场景：它保留部分原文（仍是个人信息），且模型无法凭掩码
+  在整段对话里认出"是同一个人"；确定性令牌两者都能解决
+- 令牌 = `HMAC-SHA256(密钥, 类型|原文)` 截断：**不含原文、跨轮次稳定、无私钥不可伪造**
+- 未知令牌保持原样而非猜测性替换；默认关闭，缺密钥在**启动期失败**而不是产出弱令牌
+- **35 项测试**（含两组 `ApplicationContextRunner` 自动配置集成测试）
 
 ### 🛡️ aml-compliance-checker — IDEA 敏感数据合规插件
 
 `Kotlin` `IntelliJ Platform SDK` · CI ✅ · Apache-2.0
 
-> 在 Java 注释与字符串字面量中检出身份证 / 银行卡 / 手机号明文，**一键替换为等长脱敏值**。
+> 检出代码中的身份证 / 银行卡 / 手机号明文，**一键替换为等长脱敏值**；
+> v0.3 起采用**双信号判定**并给出判定依据。
 
-身份证做 ISO 7064 MOD 11-2 校验位验证、银行卡做 Luhn 校验，订单流水号不会误报；
-报警文案只显示短预览。**17 项测试**。
+- **值形态**（高置信）：身份证过 ISO 7064 校验位、银行卡过 Luhn，值本身即可自证
+- **标识符语义**（中置信）：变量名/字段名/键名暗示敏感语义且值形似时提示——
+  专门兜住**校验位不合法的 mock 数据**，这类纯正则一律放过，却正是真实数据泄漏最常见的形态
+- 每条告警写清判定依据，用户可自行分辨真泄漏与误报；无上下文时不猜测
+- **28 项测试**
 
 ### 📚 fsc-examples — LangChain4j 金融合规示例集
 
@@ -79,6 +88,7 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 - 协议层有真实握手测试：把服务作为独立子进程拉起，走完
   `initialize → tools/list → tools/call` 全程 JSON-RPC
 - Mock-first：无 API Key、无需联网即可全链路跑通，便于上手与进 CI
+- **14 项测试**（含双轨评测与 MCP 协议握手）
 
 ## 工程习惯
 
