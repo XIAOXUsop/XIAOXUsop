@@ -82,21 +82,24 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 **上手**：下载 [zip](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest)，IDEA 里 `Install Plugin from Disk` 即可。
 
-### 📚 [fsc-examples](https://github.com/XIAOXUsop/fsc-examples) — LangChain4j 金融合规示例集
+### 🌐 [letterpress](https://github.com/XIAOXUsop/letterpress) — 中文排版讲究、写给人和 AI 读的静态博客
 
-`Java 21` `LangChain4j` `MCP` `JUnit 5` · CI ✅ · MIT
+`Astro 7` `TypeScript` `Content Negotiation` · CI ✅ · MIT
 
-> 用 `AiServices` + `@Tool` + 法规 RAG 跑通一条 AML 尽调 Agent 链路，
-> 给出**确定性护栏**与**双轨评测**（原始模型分 vs 护栏修正后分），
-> 并通过 **MCP（Model Context Protocol）** 把同一套工具面开放给任意 MCP 客户端。
+> 零配置就能跑，改一个文件就能上线；文章给人读，markdown 给 AI 读。
+> 三个差异化点都对应「别人没做的一步」：
 
-- **Agent 与 MCP 共用同一份工具实现**，不存在演示与生产两套逻辑
-- 协议层有真实握手测试：把服务作为独立子进程拉起，走完
-  `initialize → tools/list → tools/call` 全程 JSON-RPC
-- Mock-first：无 API Key、无需联网即可全链路跑通，便于上手与进 CI
-- **14 项测试**（含双轨评测与 MCP 协议握手）
+- **给 AI 读的 markdown**——Claude Code / Cursor / OpenCode 发 `Accept: text/markdown`，
+  本项目用三个平台（Cloudflare / Netlify / Vercel）的边缘函数做内容协商，
+  补上现有集成跳过的托管平台垫片；实测同一页面省 **64.6% / 66.5%** token
+- **中文排版按中文的规矩**——行高 1.75、行宽 `34em`（同时满足中文 30–40 字
+  与西文 45–75 字符）、`text-autospace` 中西文自动间距、中文不用斜体
+- **知识层 lint 会拦构建**——`[[方括号]]` 互链的独立知识库，断链使构建中止，
+  语义级检查留给 agent（AGENTS.md 约定）
+- **0 个外部 JS 文件**· 215 项单测 · 102 项端到端契约 · 对比度亮暗双模式有自动化测试
 
-**上手**：`mvn -pl fsc-cases test` —— 无需 API Key、无需联网即可全链路跑通。
+**上手**：`npm install && npm run dev` —— 零配置、零数据库、零环境变量。
+Demo：https://xiaoxusop.github.io/letterpress/
 
 ### 🗜️ [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Agent 上下文压缩引擎
 
