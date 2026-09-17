@@ -93,6 +93,7 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
   两组 `ApplicationContextRunner` 集成测试）
 
 **上手**：下载 [jar](https://github.com/XIAOXUsop/desensitize-spring-boot-starter/releases/latest) 装进本地仓库，加 `@Sensitive` 注解即可，零配置。
+（Maven Central 发布配置同样已就绪，只差凭据。）
 
 ### 🛡️ [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) — IDEA 敏感数据合规插件
 
@@ -165,6 +166,8 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 **上手（当库用）**：`io.github.xiaoxusop:ctxpress-core` **尚未发布到 Maven Central**，
 直接写坐标会解析失败。现在要用的方式是下载 Release 里的 jar 并
 `mvn install:install-file` 装进本地仓库——仓库 README 给了可复制的两步命令。
+发布配置（源码/Javadoc jar、签名、手动触发的发布工作流、POM 元数据）已全部就绪，
+缺的只有 Sonatype 令牌与 GPG 私钥。
 > 另外：报告里现在**一定会写明 token 数字的口径**（`heuristic` 还是 `o200k_base`），
 > 因为同一份内容在两种口径下能差 60%；把预算当硬约束时必须显式传计数器。
 
