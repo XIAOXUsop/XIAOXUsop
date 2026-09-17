@@ -63,9 +63,9 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 > 测试数字不手写：仓库里 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 现算，
 > 上表所列为最近一次本机验证（2026-09-18）。
 
-> **集成回归当前是红的：43 项里 24 通过、19 待修**（退款台账 10、来源版本 3、工作流超时 2、
-> PGVector 2、RAG 阈值 1、CSRF 断言 1）。它们不是"跑不起来"，而是断言与现状不符或互相污染；
-> 仓库 README 里逐类写明。写在这里是因为"CI ✅"不应该盖住这件事。
+> **集成回归当前是红的：43 项里 25 通过、18 待修**（退款台账 6、来源版本 3、工作流 5、
+> PGVector 2、RAG 阈值 1，以及一项已修的 CSRF 断言）。它们不是"跑不起来"，
+> 而是断言与现状不符；仓库 README 里逐类写明。写在这里是因为"CI ✅"不应该盖住这件事。
 
 ### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
 
