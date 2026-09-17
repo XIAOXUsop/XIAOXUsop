@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">XIAOXUsop — Java Backend, AI Applications, Agent Engineering</title>
+  <desc id="desc">A light technical blueprint showing a reliable agent system from input through Java backend and agent processing to evidence and guardrails.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.58" stop-color="#f6f8fa"/>
+      <stop offset="1" stop-color="#edf4fb"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0969da"/>
+      <stop offset="1" stop-color="#4a9eff"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#c9d4e1" stroke-width="1" opacity=".48"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="360" rx="22" fill="url(#bg)"/>
+  <rect width="1280" height="360" rx="22" fill="url(#grid)"/>
+  <path d="M0 292C240 250 348 340 585 292S944 246 1280 300V360H0Z" fill="#0969da" opacity=".045"/>
+  <rect x="1" y="1" width="1278" height="358" rx="21" fill="none" stroke="#d0d7de"/>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="68" y="62" fill="#8a6d1d" font-size="14" font-weight="700" letter-spacing="2.1">RELIABLE SYSTEMS · OPEN TO OPPORTUNITIES</text>
+    <text x="66" y="132" fill="#1f2328" font-size="60" font-weight="760" letter-spacing="-1.5">XIAOXUsop</text>
+    <rect x="68" y="151" width="84" height="4" rx="2" fill="url(#accent)"/>
+    <text x="68" y="194" fill="#3b4754" font-size="23" font-weight="600">Java Backend · AI Applications · Agent Engineering</text>
+    <text x="68" y="231" fill="#596775" font-size="17">Build systems that are evaluable, traceable, recoverable, and observable.</text>
+
+    <g font-family="Consolas, 'SFMono-Regular', monospace" font-size="13" font-weight="600">
+      <rect x="68" y="263" width="104" height="34" rx="8" fill="#eaf4ff" stroke="#86bdf2"/>
+      <text x="86" y="285" fill="#0969da">JAVA 21</text>
+      <rect x="184" y="263" width="142" height="34" rx="8" fill="#eaf4ff" stroke="#86bdf2"/>
+      <text x="201" y="285" fill="#0969da">SPRING BOOT</text>
+      <rect x="338" y="263" width="136" height="34" rx="8" fill="#fff9df" stroke="#c9a961"/>
+      <text x="355" y="285" fill="#795d12">LANGCHAIN4J</text>
+    </g>
+  </g>
+
+  <g transform="translate(720 48)" font-family="Consolas, 'SFMono-Regular', monospace">
+    <rect width="492" height="264" rx="16" fill="#ffffff" fill-opacity=".88" stroke="#b8c5d3"/>
+    <circle cx="23" cy="22" r="4" fill="#cf222e"/>
+    <circle cx="38" cy="22" r="4" fill="#bf8700"/>
+    <circle cx="53" cy="22" r="4" fill="#1a7f37"/>
+    <text x="244" y="27" text-anchor="middle" fill="#657483" font-size="11" letter-spacing="1.7">RELIABLE AGENT SYSTEMS</text>
+    <line x1="0" y1="42" x2="492" y2="42" stroke="#d0d7de"/>
+
+    <g font-size="12" font-weight="700">
+      <rect x="28" y="76" width="106" height="48" rx="9" fill="#f6f8fa" stroke="#8c9dad"/>
+      <text x="81" y="96" text-anchor="middle" fill="#657483" font-size="9">01</text>
+      <text x="81" y="113" text-anchor="middle" fill="#34404c">EVENT</text>
+
+      <path d="M142 100H171" stroke="#0969da" stroke-width="2"/>
+      <path d="M166 95L173 100L166 105" fill="none" stroke="#0969da" stroke-width="2"/>
+
+      <rect x="180" y="76" width="126" height="48" rx="9" fill="#eaf4ff" stroke="#0969da"/>
+      <text x="243" y="96" text-anchor="middle" fill="#0969da" font-size="9">02</text>
+      <text x="243" y="113" text-anchor="middle" fill="#1f2328">JAVA BACKEND</text>
+
+      <path d="M314 100H343" stroke="#0969da" stroke-width="2"/>
+      <path d="M338 95L345 100L338 105" fill="none" stroke="#0969da" stroke-width="2"/>
+
+      <rect x="352" y="76" width="112" height="48" rx="9" fill="#eaf4ff" stroke="#0969da"/>
+      <text x="408" y="96" text-anchor="middle" fill="#0969da" font-size="9">03</text>
+      <text x="408" y="113" text-anchor="middle" fill="#1f2328">AGENT / RAG</text>
+    </g>
+
+    <path d="M408 130V154H243V168" fill="none" stroke="#718293" stroke-width="2" stroke-dasharray="5 5"/>
+    <path d="M238 161L243 169L248 161" fill="none" stroke="#9a781c" stroke-width="2"/>
+
+    <rect x="121" y="173" width="244" height="50" rx="10" fill="#fff9df" stroke="#b18a21"/>
+    <circle cx="145" cy="198" r="7" fill="#b18a21"/>
+    <path d="M142 198l2 2 4-5" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="164" y="194" fill="#795d12" font-size="9">04 · VERIFIED OUTPUT</text>
+    <text x="164" y="210" fill="#5f490e" font-size="12" font-weight="700">EVIDENCE + GUARDRAILS</text>
+
+    <g font-size="9" letter-spacing="1">
+      <text x="29" y="250" fill="#657483">EVAL</text><circle cx="67" cy="247" r="3" fill="#1a7f37"/>
+      <text x="102" y="250" fill="#657483">TRACE</text><circle cx="149" cy="247" r="3" fill="#1a7f37"/>
+      <text x="184" y="250" fill="#657483">RECOVERY</text><circle cx="251" cy="247" r="3" fill="#1a7f37"/>
+      <text x="286" y="250" fill="#657483">OBSERVABILITY</text><circle cx="390" cy="247" r="3" fill="#1a7f37"/>
+    </g>
+  </g>
+</svg>
