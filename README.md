@@ -1,129 +1,177 @@
-<p align="center">
-  <img src="./assets/profile-hero-dark.svg#gh-dark-mode-only" width="100%" alt="XIAOXUsop — Java Backend, AI Applications, Agent Engineering" />
-  <img src="./assets/profile-hero-light.svg#gh-light-mode-only" width="100%" alt="XIAOXUsop — Java Backend, AI Applications, Agent Engineering" />
-</p>
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:4A9EFF,100:C9A961&height=200&section=header&text=XIAOXUsop&fontSize=50&fontAlignY=34&desc=Java%20%E5%90%8E%E7%AB%AF%20%C2%B7%20%E6%99%BA%E8%83%BD%20Agent%20%E5%BA%94%E7%94%A8%20%C2%B7%20%E8%87%AA%E7%A0%94%E6%8F%92%E4%BB%B6%E4%B8%8E%E5%B7%A5%E5%85%B7&descSize=17&descAlignY=54&anim=fade" alt="header"/>
+</div>
+
+<div align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=21&pause=1200&color=4A9EFF&center=true&vCenter=true&width=600&lines=%E4%B8%8D%E6%BB%A1%E8%B6%B3%E4%BA%8E%E2%80%9C%E6%8A%8A%E6%A8%A1%E5%9E%8B%E8%B7%91%E9%80%9A%E2%80%9D%EF%BC%8C%E8%A6%81%E6%B1%82%E5%8F%AF%E8%AF%84%E6%B5%8B%E3%80%81%E5%8F%AF%E8%BF%BD%E6%BA%AF%E3%80%81%E5%8F%AF%E6%81%A2%E5%A4%8D;%E6%AF%8F%E4%B8%AA%E7%BB%93%E8%AE%BA%E9%83%BD%E8%A6%81%E6%9C%89%E6%95%B0%E6%8D%AE%E6%94%AF%E6%92%91" alt="typing"/>
+</div>
+
+## 我是谁
+
+Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 / 插件**。
+
+我做事的判断标准不是"功能跑通了"，而是 **可评测、可追溯、可恢复、可观测**——
+每条风险结论都要能引用到法规证据，每个性能数字都要能复现。
+
+## 技术栈
+
+<div align="center">
+
+<a href="https://skillicons.dev">
+  <img src="https://skillicons.dev/icons?i=java,spring,mysql,redis,pg,docker,git,maven,linux,js,vue,ts&theme=dark" alt="skills"/>
+</a>
+
+</div>
+
+## 精选项目
+
+### 🏦 [amlagent](https://github.com/XIAOXUsop/amlagent) — 商业银行智能反洗钱（AML）尽调 Agent 平台
+
+`Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI ✅ · MIT
+
+> 接收反洗钱预警工单后，可靠地调度 Agent 工作流，自动完成交易画像、股权穿透、制裁名单筛查、
+> 监管法规检索、风险研判与结构化报告生成；用**独立于大模型的护栏**校验结论，高风险工单转人工复核闭环。
+
+- **可靠任务** — Transactional Outbox + Redis Streams，含幂等、重试、死信、租约 fencing、崩溃恢复
+- **证据追溯** — 混合 RAG（向量 + 中文词法 + 加权 RRF + 精排），结论必须引用 `evidenceId`
+- **安全护栏** — 配置化规则 DSL；Prompt 注入三层防护；一级制裁强制 HIGH 并转人工
+- **可观测** — Prometheus 指标 + **OpenTelemetry GenAI 语义约定**追踪：span 按 `chat {模型}`
+  命名，属性涵盖 `gen_ai.usage.*` / `gen_ai.response.finish_reasons` 等，
+  接入任意 OTel 后端无需私有埋点；**span 只记元数据，绝不写入 prompt 或补全内容**
+
+**上手**：`docker compose up` 一键起全栈（后端 + 前端 + MySQL + Redis + PGVector + Prometheus/Grafana）。
+
+**已验证的数据**（详见仓库内评测报告）
+
+| 评测项 | 结果 |
+|---|---|
+| RAG 法规检索 Recall@5 | **93.3%** → 接入 bge 精排 **100%**（nDCG@5 96.7%，无答案拒答 100%） |
+| DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV，多轮迭代基线） |
+| 一级制裁规则漏报 | **0 / 5** |
+| 测试 | 后端 242 项单测 · 22 项集成回归 · 前端 15 项 |
+
+> 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
+
+### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
+
+`Java 21` `Spring Boot 3` `Jackson` `HMAC` · CI ✅ · MIT
+
+> 两层能力：**接口返回值脱敏**（`@Sensitive` 注解，Jackson 序列化层，业务零侵入），
+> 以及 **大模型输入输出脱敏**——发送前把敏感值换成确定性令牌，收到回复后自动还原。
+
+- 掩码解决不了大模型场景：它保留部分原文（仍是个人信息），且模型无法凭掩码
+  在整段对话里认出"是同一个人"；确定性令牌两者都能解决
+- 令牌 = `HMAC-SHA256(密钥, 类型|原文)` 截断：**不含原文、跨轮次稳定、无私钥不可伪造**
+- 未知令牌保持原样而非猜测性替换；默认关闭，缺密钥在**启动期失败**而不是产出弱令牌
+- **35 项测试**（含两组 `ApplicationContextRunner` 自动配置集成测试）
+
+**上手**：下载 [jar](https://github.com/XIAOXUsop/desensitize-spring-boot-starter/releases/latest) 装进本地仓库，加 `@Sensitive` 注解即可，零配置。
+
+### 🛡️ [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) — IDEA 敏感数据合规插件
+
+`Kotlin` `IntelliJ Platform SDK` · CI ✅ · Apache-2.0
+
+> 检出代码中的身份证 / 银行卡 / 手机号明文，**一键替换为等长脱敏值**；
+> v0.3 起采用**双信号判定**并给出判定依据。
+
+- **值形态**（高置信）：身份证过 ISO 7064 校验位、银行卡过 Luhn，值本身即可自证
+- **标识符语义**（中置信）：变量名/字段名/键名暗示敏感语义且值形似时提示——
+  专门兜住**校验位不合法的 mock 数据**，这类纯正则一律放过，却正是真实数据泄漏最常见的形态
+- 每条告警写清判定依据，用户可自行分辨真泄漏与误报；无上下文时不猜测
+- **28 项测试**
+
+**上手**：下载 [zip](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest)，IDEA 里 `Install Plugin from Disk` 即可。
+
+### 🌐 [letterpress](https://github.com/XIAOXUsop/letterpress) — 中文排版讲究、写给人和 AI 读的静态博客
+
+`Astro 7` `TypeScript` `Content Negotiation` · CI ✅ · MIT
+
+> 零配置就能跑，改一个文件就能上线；文章给人读，markdown 给 AI 读。
+> 三个差异化点都对应「别人没做的一步」：
+
+- **给 AI 读的 markdown**——Claude Code / Cursor / OpenCode 发 `Accept: text/markdown`，
+  本项目用三个平台（Cloudflare / Netlify / Vercel）的边缘函数做内容协商，
+  补上现有集成跳过的托管平台垫片；实测同一页面省 **64.6% / 66.5%** token
+- **中文排版按中文的规矩**——行高 1.75、行宽 `34em`（同时满足中文 30–40 字
+  与西文 45–75 字符）、`text-autospace` 中西文自动间距、中文不用斜体
+- **知识层 lint 会拦构建**——`[[方括号]]` 互链的独立知识库，断链使构建中止，
+  语义级检查留给 agent（AGENTS.md 约定）
+- **0 个外部 JS 文件**· 215 项单测 · 102 项端到端契约 · 对比度亮暗双模式有自动化测试
+
+**上手**：`npm install && npm run dev` —— 零配置、零数据库、零环境变量。
+Demo：https://xiaoxusop.github.io/letterpress/
+
+### 🗜️ [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Agent 上下文压缩引擎
+
+`Java 21` `Context Engineering` · CI ✅ · MIT
+
+> 在工具输出、日志、RAG 片段进入 LLM 之前，按你给出的 token 预算压缩它们——
+> **确定性、可审计、可逆**。
+
+- **输出 ≤ 你给的预算**，做不到时（只有受保护内容本身就超预算这一种情形）
+  报告里显式给出 `overBudgetBy`，**绝不静默超标**。
+  这条契约由一张 **6 类语料 × 10 档预算的矩阵**逐格断言，CI 当门禁跑：**遵守率 100%**
+- **保真评测（离线，无模型）**：命中保护规则的关键信息**任何预算下召回 100%**
+  （对照组朴素头截断在小预算下只有 33%）；6 个用例 **0 行凭空生成**——
+  输出的每一行要么逐字来自输入、要么匹配已声明的省略标记文法
+- **可逆**：压掉的原文进内容寻址归档，**归档引用被写进压缩内容本身**，
+  读到这段内容的模型自己就知道有东西被省略、以及怎么要回来。
+  命令行 `--archive` 写文件归档、`retrieve` 取回，**逐字节一致**
+- **不调用模型**：同输入必然同输出（可写断言测试）、零增量成本、不会引入原文没有的事实
+
+> **如实标注局限**：未受保护的关键信息召回与最朴素的均匀行采样相当（略低）——
+> 差距来自省略标记的开销（一个标记约 7 token、一行日志约 11 token），
+> 那是"可审计 + 可取回"的代价。另外尚无下游任务精度评测（GSM8K 那类需要真调模型、
+> 要花钱，且对抽取式压缩器用错了指标）。仓库 README 中已如实标注。
+
+**上手**：下载 [ctxpress.jar](https://github.com/XIAOXUsop/ctxpress/releases/latest) → `java -jar ctxpress.jar analyze --max-tokens 8000 app.log`
+
+### 🛰️ [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) — MCP 工具面 lockfile
+
+`Java 21` `MCP` `Security` · CI ✅ · MIT
+
+> 把 MCP 服务器的工具定义锁下来、提交进版本库，让"配置被悄悄改了"像"代码被改了"
+> 一样出现在 diff 与评审里。
+
+- 针对 **rug pull**：名字与 schema 都不变、只悄悄改描述。扫描器每次拿到的都是当前版本，
+  **没有历史对照就发现不了**——这不是"规则多少"的差别，而是"有没有基线"的差别
+- 输出 **SARIF 2.1.0**，发现以行内注解出现在 PR 上；退出码可作 CI 门禁
+- **完全离线**（对比 snyk / cisco 的 MCP 扫描器需要云 API 或 LLM Key），
+  且它们目前都不做基线漂移——互补而非替代
+
+**上手**：下载 [mcp-sentinel.jar](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest) → `java -jar mcp-sentinel.jar lock --config mcp.json`
+
+## 工程习惯
+
+- **每个项目都配 CI + 单元测试 + 开源协议**，构建产物不进仓库
+- **可复现优先**：评测结果落盘 JSON，数据集带冻结标识与版本要素
+- **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力
+- **产物可获取**：每个项目都发 GitHub Release 并附可直接运行的产物——
+  「下载就能用」比「clone 下来自己构建」的门槛低一个数量级
+
+## GitHub 数据
 
 <p align="center">
-  <a href="https://github.com/XIAOXUsop/amlagent"><strong>旗舰项目</strong></a> ·
-  <a href="https://github.com/XIAOXUsop/ctxpress">Agent 基础设施</a> ·
-  <a href="https://github.com/XIAOXUsop/mcp-sentinel">MCP 安全</a> ·
-  <a href="https://xiaoxusop.github.io/letterpress/">博客 / Demo</a>
+  <img src="https://github-readme-stats.vercel.app/api?username=XIAOXUsop&show_icons=true&theme=synthwave&hide_border=true&count_private=true" alt="GitHub Stats" height="165"/>
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=XIAOXUsop&layout=compact&theme=synthwave&hide_border=true" alt="Top Languages" height="165"/>
 </p>
 
-## 关于我
+<div align="center">
+  <img src="https://streak-stats.demolab.com?user=XIAOXUsop&locale=zh_CN&theme=synthwave&hide_border=true" alt="GitHub Streak"/>
+</div>
 
-专注 **Java 后端开发、AI 应用开发与 Agent 工程**，目前开放相关岗位机会。
+<div align="center">
+  <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/main/github-metrics.svg" alt="Metrics"/>
+</div>
 
-我关注的不只是“把模型调用跑通”，而是如何让一个 AI 应用具备
-**可评测、可追溯、可恢复、可观测**的工程属性：任务失败后能够恢复，模型结论能够找到证据，
-效果能够通过固定数据集回归，关键链路能够被监控。
-
-> **求职方向：** Java 后端 / AI 应用 / Agent 工程　　
-> **项目特点：** 均提供源码、README、自动化测试与 CI；核心工具提供可下载 Release
-
-## 30 秒速览
-
-| 能力方向 | 我做过什么 | 可核验项目 |
-|---|---|---|
-| Java 后端 | 可靠异步任务、状态机、JWT/CSRF、双数据源、数据库迁移、SSE | [amlagent](https://github.com/XIAOXUsop/amlagent) |
-| AI 应用 | LangChain4j 工具调用、混合 RAG、结构化输出、规则护栏、模型评测 | [amlagent](https://github.com/XIAOXUsop/amlagent) · [fsc-examples](https://github.com/XIAOXUsop/fsc-examples) |
-| Agent 工程 | 上下文预算与恢复、MCP 工具面基线、证据链、人工复核闭环 | [ctxpress](https://github.com/XIAOXUsop/ctxpress) · [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) |
-| 工程质量 | 离线测试、集成测试、固定评测集、CI、Release、Prometheus / OTel | [所有公开仓库](https://github.com/XIAOXUsop?tab=repositories) |
-
-## 代表项目
-
-### 1. [amlagent](https://github.com/XIAOXUsop/amlagent) — AML 尽调 Agent 平台
-
-`Java 21` `Spring Boot 3.5` `LangChain4j` `Redis Streams` `PostgreSQL / pgvector` `Vue 3`
-
-接收反洗钱预警工单后，调度 Agent 完成交易画像、股权穿透、制裁筛查、法规检索、风险研判和报告生成；
-模型结论经过独立规则护栏校验，高风险工单进入人工复核。
-
-- **可靠任务：** Transactional Outbox + Redis Streams，覆盖幂等、重试、死信、租约 fencing 与崩溃恢复。
-- **一致性：** 推理前通过 Snapshot First 冻结业务快照，工具与护栏读取同一版本数据。
-- **证据闭环：** 向量 + 中文词法 + 加权 RRF + 精排，报告引用可回溯到法规 `evidenceId`。
-- **安全与观测：** Prompt 注入分层防护；Prometheus 指标与 OpenTelemetry GenAI 追踪不记录提示词正文。
-
-**验证证据：** 固定的 18 条 RAG DEV 中，无精排 Recall@5 为 **93.3%**，本地 bge 精排后为
-**100%**；同时冷缓存 P95 从 **135ms** 增至 **671ms**。这里保留延迟代价，不只展示质量收益。
-数据集仍是 `PENDING_DOMAIN_REVIEW`，这些数字是开发基线，**不代表真实银行生产准确率**。
-
-[源码与运行说明](https://github.com/XIAOXUsop/amlagent) ·
-[项目全景文档](https://github.com/XIAOXUsop/amlagent/blob/master/PROJECT-OVERVIEW.md) ·
-[真实模型评测报告](https://github.com/XIAOXUsop/amlagent/blob/master/DeepSeek真实Agent评测报告-二轮对比.md)
-
-### 2. [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Agent 上下文压缩引擎
-
-`Java 21` `Maven Multi-module` `CLI` `Context Engineering` `Content-addressed Archive`
-
-在日志、工具输出和 RAG 片段进入模型前，按 token 预算进行**确定性、可审计、可恢复**的压缩，
-不调用模型，同一输入与策略得到同一结果。
-
-- **预算契约：** 输出不静默超过预算；保护内容本身超限时显式报告 `overBudgetBy`。
-- **保真：** 命中保护规则的信息在当前离线评测各预算下召回 **100%**；小预算头截断对照组为 33%。
-- **可恢复：** 被省略原文进入内容寻址归档，压缩结果携带引用，取回时逐字节一致。
-- **可验证：** 84 项离线测试；6 个保真用例中，输出共 **0 行凭空生成**。
-
-这些结果只说明仓库中声明的语料与保护规则；项目尚未宣称能提升任意下游模型任务的准确率。
-
-[源码与评测方法](https://github.com/XIAOXUsop/ctxpress) ·
-[下载 Release](https://github.com/XIAOXUsop/ctxpress/releases/latest)
-
-### 3. [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) — MCP 工具面 lockfile
-
-`Java 21` `MCP SDK` `JSON Schema` `SARIF 2.1.0` `CI Security Gate`
-
-把 MCP Server 暴露的工具名称、描述和 schema 锁定为版本化基线，让静默配置变化像代码变化一样进入
-diff、评审和 CI。
-
-- **基线漂移：** 识别工具新增/删除、描述变化、schema 收放宽以及工具影子等风险。
-- **面向 rug pull：** 即使工具名称与参数没变，只修改描述，也能与历史基线进行比较。
-- **CI 集成：** 输出 SARIF 2.1.0 和稳定退出码，可在 GitHub PR 中展示定位结果。
-- **离线验证：** 不依赖云扫描 API 或 LLM Key，当前包含 84 项测试。
-
-它是工具面变更检测器，不把自己包装成能够识别所有恶意 MCP Server 的万能扫描器。
-
-[源码与威胁模型](https://github.com/XIAOXUsop/mcp-sentinel) ·
-[下载 Release](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest)
-
-## 其他可运行项目
-
-| 项目 | 解决的问题 | 工程证据 |
-|---|---|---|
-| [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) | Jackson 序列化层注解式脱敏；LLM 输入输出的 HMAC 确定性假名化与还原 | 8 种脱敏类型、35 项测试、自动配置集成测试、可下载 JAR |
-| [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) | 在 IDEA 中发现注释/字符串里的身份证、银行卡等明文，并提供 QuickFix | Kotlin + PSI、值形态与标识符语义双信号、可下载插件 ZIP |
-| [letterpress](https://github.com/XIAOXUsop/letterpress) | 面向人和 AI 双读的静态博客：HTML/Markdown 内容协商 + Wiki 构建检查 | 215 项单测、102 项产物契约、[在线 Demo](https://xiaoxusop.github.io/letterpress/) |
-
-## 技术能力
-
-| 方向 | 实际使用的技术 | 主要落点 |
-|---|---|---|
-| Java 后端 | Java 21、Spring Boot 3、Maven、JPA、JWT、SSE | amlagent、desensitize starter |
-| 数据与异步 | MySQL、PostgreSQL / pgvector、Redis Streams、Flyway | amlagent |
-| AI / Agent | LangChain4j、Tool Calling、RAG、结构化输出、Guardrails、Eval | amlagent、fsc-examples |
-| Agent 工具 | MCP、上下文压缩、内容寻址归档、SARIF | ctxpress、mcp-sentinel |
-| 可观测与交付 | Docker Compose、Prometheus、OpenTelemetry、GitHub Actions | amlagent、各项目 CI |
-| 前端与内容 | Vue 3、TypeScript、Astro | amlagent frontend、letterpress |
-
-## 我的工程方法
-
-- **先定义失败条件：** 超预算、无证据、模型输出无效、任务重复消费，都应有显式结果而不是静默兜底。
-- **区分模型能力与系统能力：** 原始模型结果、规则修正结果、端到端任务结果分别计分。
-- **保留版本与证据：** 数据集哈希、Prompt 版本、规则版本、快照摘要进入报告或执行记录。
-- **承认边界：** 合成数据不等于生产数据，DEV 调优结果不等于泛化能力，本地延迟不等于线上 SLA。
-- **让项目能被运行：** 优先提供 Mock / 离线路径、Maven Wrapper、Docker Compose、CI 和 Release。
-
-更详细的主页取舍、证据来源和维护规则见 [design.md](./design.md)。
-
-## GitHub Activity
-
-<p align="center">
-  <img src="./github-metrics.svg" width="100%" alt="XIAOXUsop GitHub activity metrics" />
-</p>
+<div align="center">
+  <img src="https://raw.githubusercontent.com/XIAOXUsop/XIAOXUsop/output/github-contribution-grid-snake-dark.svg" alt="Snake animation"/>
+</div>
 
 ## 联系
 
-- GitHub：[@XIAOXUsop](https://github.com/XIAOXUsop)
-- 项目与技术讨论：可在对应仓库提交 Issue
+- GitHub: [@XIAOXUsop](https://github.com/XIAOXUsop)
 
-如果你的团队正在招聘 **Java 后端、AI 应用或 Agent 工程方向**的岗位，欢迎通过 GitHub 与我联系。
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:C9A961,100:4A9EFF&height=100&section=footer" alt="footer"/>
+</div>
