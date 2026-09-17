@@ -57,15 +57,15 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 | RAG 法规检索 Recall@5 | **93.3%** → 接入 bge 精排 **100%**（nDCG@5 96.7%，无答案拒答 100%） |
 | DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV，多轮迭代基线） |
 | 一级制裁规则漏报 | **0 / 5** |
-| 测试 | 后端单测 **548/549**（548 通过、1 项真实模型评测默认跳过）· 前端 **85** · Playwright E2E **8/8** |
+| 测试 | 后端单测 **548/549**（548 通过、1 项真实模型评测默认跳过）· 集成回归 **44/44** · 前端 **85** · Playwright E2E **8/8** |
 
 > 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 > 测试数字不手写：仓库里 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 现算，
 > 上表所列为最近一次本机验证（2026-09-18）。
 
-> **集成回归当前是红的：43 项里 25 通过、18 待修**（退款台账 6、来源版本 3、工作流 5、
-> PGVector 2、RAG 阈值 1，以及一项已修的 CSRF 断言）。它们不是"跑不起来"，
-> 而是断言与现状不符；仓库 README 里逐类写明。写在这里是因为"CI ✅"不应该盖住这件事。
+> 集成回归 **44/44 全绿**（Playwright E2E 8/8）。本轮开始时它是 19 项失败，逐簇查明是
+> 三个独立原因：服务端新增校验而测试夹具未同步、法规语料的字节哈希被 Windows 的
+> CRLF 检出破坏、以及测试用本地时区而应用用 UTC。都不是"测试发现了真问题"。
 
 ### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
 
