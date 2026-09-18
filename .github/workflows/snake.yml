@@ -17,7 +17,7 @@ jobs:
           outputs: |
             dist/github-contribution-grid-snake-dark.svg
             dist/github-contribution-grid-snake.svg?palette=github-light
-      - uses: crazy-max/ghaction-github-pages@v4
+      - uses: crazy-max/ghaction-github-pages@v5
         with:
           target_branch: output
           build_dir: dist
