@@ -1,0 +1,17 @@
+# 只跟 GitHub Actions 的版本更新。
+#
+# 为什么需要它：`metrics.yml` 里的 `lowlighter/metrics` 是按**完整 commit SHA**
+# 钉住的——理由是它的 `latest` 其实是个会动的**分支**（实测过：那个仓库有
+# `branches/latest`，没有 `tags/latest`），而上游往分支上一推，本仓库不改任何东西
+# 执行的代码就会变。钉 SHA 之后就失去了自动升级，靠这里补上：
+# Dependabot 认得行尾的 `# v3.34` 注释，会照常提 PR。
+#
+# 只开 `github-actions` 一个生态：本仓库没有依赖清单，加别的没有意义；
+# 它是个主页展示仓库，不需要依赖更新的噪音。
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3

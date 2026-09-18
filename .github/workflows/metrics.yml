@@ -11,7 +11,20 @@ jobs:
   metrics:
     runs-on: ubuntu-latest
     steps:
-      - uses: lowlighter/metrics@latest
+      # ⚠️ 这里是**按完整 commit SHA 钉住**的，不要改回 `@latest`。
+      #
+      # `lowlighter/metrics` 的 `latest` **是一个分支，不是标签**（实测：
+      # `GET /repos/lowlighter/metrics/branches/latest` 有，`/git/ref/tags/latest` 没有）。
+      # 分支会动——上游往那上面一推，**本仓库不改任何东西，这一步执行的代码就变了**。
+      # 而它是本仓库里权限最大的一步（`permissions: contents: write` 加
+      # `secrets.METRICS_TOKEN` 这个 PAT），最不该跑浮动引用。
+      #
+      # 本仓库另外两个 action（`Platane/snk@v3`、`crazy-max/ghaction-github-pages@v4`）
+      # 查过都是**标签**，属于常见写法，不在这里动。
+      #
+      # 钉 SHA 的代价是不会自动升级——由 `.github/dependabot.yml` 补上：
+      # Dependabot 认得行尾的 `# v3.34` 注释，会照常提 PR。
+      - uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           user: XIAOXUsop
