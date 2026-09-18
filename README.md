@@ -195,7 +195,7 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
   并明确静态风险发现不参与批准——它们描述的是工具面本身有问题，不是"和上次不一样"；
   没有变更可批准时**一个字节都不写**——否则 PR 里会多出一条只有时间戳的 diff，
   而基线 diff 正是这个工具唯一能被评审的东西
-- **112 项测试**（含真实 stdio 子进程与本地 Streamable HTTP 服务器的端到端）
+- **117 项测试**（含真实 stdio 子进程与本地 Streamable HTTP 服务器的端到端）
 - **完全离线**（对比 snyk / cisco 的 MCP 扫描器需要云 API 或 LLM Key），
   且它们目前都不做基线漂移——互补而非替代
 
