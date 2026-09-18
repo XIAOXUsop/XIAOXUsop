@@ -166,6 +166,9 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 **上手（当库用）**：`io.github.xiaoxusop:ctxpress-core` **尚未发布到 Maven Central**，
 直接写坐标会解析失败。现在要用的方式是下载 Release 里的 jar 并
 `mvn install:install-file` 装进本地仓库——仓库 README 给了可复制的两步命令。
+**请用 v0.4.2 或更新**：更早版本内嵌的 POM 带着一个没随 Release 发布的父 POM，
+装完之后宿主工程会报 `Could not find artifact …:ctxpress-parent`，根本用不起来
+（这条是照自己的文档亲手做了一遍才发现的）。
 发布配置（源码/Javadoc jar、签名、手动触发的发布工作流、POM 元数据）已全部就绪，
 缺的只有 Sonatype 令牌与 GPG 私钥。
 > 另外：报告里现在**一定会写明 token 数字的口径**（`heuristic` 还是 `o200k_base`），
