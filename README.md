@@ -211,10 +211,24 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 
 ## GitHub 数据
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=XIAOXUsop&show_icons=true&theme=synthwave&hide_border=true&count_private=true" alt="GitHub Stats" height="165"/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=XIAOXUsop&layout=compact&theme=synthwave&hide_border=true" alt="Top Languages" height="165"/>
-</p>
+<!--
+  原先这里还有两张卡，来自 github-readme-stats 的公共实例：
+      /api?username=XIAOXUsop&show_icons=true&theme=synthwave...
+      /api/top-langs/?username=XIAOXUsop&layout=compact&theme=synthwave...
+
+  2026-09-19 移除：该公共实例**整站 503**——不只是这两张卡，
+  连它的裸首页、以及为其他用户（如 torvalds）生成的卡都返回 503，
+  所以这是服务级故障，不是账号或参数的问题。而同一份主页上的
+  streak-stats 与 capsule-render 都是 200，说明不是本机网络的问题。
+
+  它对带宽/速率限制一向紧张，属于这一类的已知代价。而下面那张
+  `github-metrics.svg` 是**本仓库自己的 Actions 生成并提交**的——
+  不依赖任何第三方实例，覆盖面还更全。所以这两张不是「没了」，
+  是被一张更可靠、信息更多的替代了。
+
+  若将来该公共实例恢复、而你仍想要那两张紧凑卡：把上面的两行 src 加回
+  `<p align="center">` 里即可（参数照抄注释即可复原）。
+-->
 
 <div align="center">
   <img src="https://streak-stats.demolab.com?user=XIAOXUsop&locale=zh_CN&theme=synthwave&hide_border=true" alt="GitHub Streak"/>
