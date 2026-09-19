@@ -30,6 +30,13 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
   2026-09-19 同步过一次，当时发现四处对不上（amlagent 后端单测 549→575、
   letterpress 单测 220→254、契约 104→194、token 节省 64.5%/66.5%→68.9%/70.2%）。
 
+  2026-09-20 又同步一次，两处要改、其余对得上：
+  · letterpress 单测 254 → **263**（另外三项数字各自与仓库里的一致）；
+  · amlagent 原先写的「CI ✅」**不成立**——8 个 job 里 7 个绿，依赖扫描是红的，
+    而且那是 17 条**真告警**（不是工具故障），如实写进正文了。
+  这一轮还给每个项目的数字都加了一行「验证提交：<短 SHA>」——
+  数据只引用**已经推送、且 CI 跑过**的提交，免得再出现"主页说绿、仓库其实红"。
+
   取数命令（都在对应仓库里跑）：
 
     amlagent      后端单测/集成/前端 → `python scripts/test_summary.py`（只读真实产物）
@@ -48,7 +55,7 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 ### 🏦 [amlagent](https://github.com/XIAOXUsop/amlagent) — 商业银行智能反洗钱（AML）尽调 Agent 平台
 
-`Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI ✅ · MIT
+`Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI 8 项 7 绿 · MIT
 
 > 接收反洗钱预警工单后，可靠地调度 Agent 工作流，自动完成交易画像、股权穿透、制裁名单筛查、
 > 监管法规检索、风险研判与结构化报告生成；用**独立于大模型的护栏**校验结论，高风险工单转人工复核闭环。
@@ -78,14 +85,22 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 | RAG 法规检索 Recall@5 | **93.3%** → 接入 bge 精排 **100%**（nDCG@5 96.7%，无答案拒答 100%） |
 | DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV，多轮迭代基线） |
 | 一级制裁规则漏报 | **0 / 5** |
-| 测试 | 后端单测 **575/576**（575 通过、1 项真实模型评测默认跳过）· 集成回归 **44/44** · 前端 **85** · Playwright E2E **8/8** |
+| 测试 | 后端单测 **575/576**（575 通过、1 项真实模型评测默认跳过）· 集成回归 **43/44**（1 项四路检索 A/B 需本机加载精排模型，CI 上按前置条件跳过）· 前端 **85** · Playwright E2E **8/8** |
 
 > 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 > 测试数字不手写：仓库里 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 现算，
-> 上表所列为最近一次本机验证（2026-09-19）。
+> 再由 CI 的 `README Test Numbers` job 拿 README 与当次产物**逐格比对**，对不上就红。
+> 上表验证于提交 `fe40977`（2026-09-20）。
 
-> 集成回归 **44/44 全绿**（Playwright E2E 8/8）。本轮开始时它是 19 项失败，逐簇查明是
-> 三个独立原因：服务端新增校验而测试夹具未同步、法规语料的字节哈希被 Windows 的
+> **CI 的真实状态，不写「✅」两个字糊过去：8 个 job 里 7 个绿，
+> `Backend Dependency Vulnerability Scan` 是红的。** 那是 **17 条真告警**，归并在
+> `spring-core`、`spring-security-core`、`pgvector`、`mysql-connector-j` 四个依赖上
+> （最高 CVSS 9.8）——**不是工具坏了，也不是随手升个版本就能消掉**：其中一批的修复版本
+> 上游**还没发布**。仓库 README 的「依赖安全」一节逐条写了受影响区间与处理原则；
+> 门禁宁可一直红着，也没有为了变绿去加一条豁免。
+
+> 集成回归 **43/44（1 项按前置条件跳过）、0 失败**（Playwright E2E 8/8）。本轮开始时它是 19 项失败，
+> 逐簇查明是三个独立原因：服务端新增校验而测试夹具未同步、法规语料的字节哈希被 Windows 的
 > CRLF 检出破坏、以及测试用本地时区而应用用 UTC。都不是"测试发现了真问题"。
 
 ### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
@@ -116,6 +131,10 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 **上手**：下载 [jar](https://github.com/XIAOXUsop/desensitize-spring-boot-starter/releases/latest) 装进本地仓库，加 `@Sensitive` 注解即可，零配置。
 （Maven Central 发布配置同样已就绪，只差凭据。）
 
+> 数字与 Release 验证于提交 `093e457`（2026-09-20，CI 与 v0.6.2 Release 均通过）。
+> v0.6.2 的 jar 已下载核对：内嵌 POM **没有 `<parent>`**（装完不会再去解析一个没发布的父 POM），
+> 且 `jackson-bom` 钉在 **2.21.5**——v0.6.1 的解析结果是 2.21.2，命中 5 条公告。
+
 ### 🛡️ [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) — IDEA 敏感数据合规插件
 
 `Kotlin` `IntelliJ Platform SDK` · CI ✅ · Apache-2.0
@@ -134,6 +153,14 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 
 **上手**：下载 [zip](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest)，IDEA 里 `Install Plugin from Disk` 即可。
 
+> **v0.4.4 请勿使用**：那个 tag 的产物——压缩包名与包内 `plugin.xml` 的 `<version>`——**都是 0.4.1**
+> （发布工作流没把 tag 传给构建，取的是 `gradle.properties` 里从 0.4.1 起就没再动过的值）。
+> 装了它的人在插件列表里看到的是 0.4.1，**无法据此确认自己装的是哪一版**。
+> **v0.4.5 起版本号才真正等于 tag**，且发布流程会断言 zip 名 / 包内 jar 名 / `plugin.xml`
+> 三处都等于 tag，不一致就拒绝上传。v0.4.4 的 Release 不删除、不覆盖，只在说明里指向 v0.4.5。
+>
+> 数字验证于提交 `446ec89`（2026-09-20，Build 通过）。
+
 ### 🌐 [letterpress](https://github.com/XIAOXUsop/letterpress) — 中文排版讲究、写给人和 AI 读的静态博客
 
 `Astro 7` `TypeScript` `Content Negotiation` · CI ✅ · MIT
@@ -148,9 +175,11 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
   与西文 45–75 字符）、`text-autospace` 中西文自动间距、中文不用斜体
 - **知识层 lint 会拦构建**——`[[方括号]]` 互链的独立知识库，断链使构建中止，
   语义级检查留给 agent（AGENTS.md 约定）
-- **文章阅读页无外链 JavaScript**（首页仅 2.4 KB 内联）· **254 项**单测 ·
+- **文章阅读页无外链 JavaScript**（首页仅 2.4 KB 内联）· **263 项**单测 ·
   **194 项**端到端契约 · 对比度亮暗双模式有自动化测试
   （搜索页按需加载站内 Pagefind，那不算外链，但也别理解成"整站零 JS"）
+
+> 数字验证于提交 `ac3a939`（2026-09-20，CI 与 GitHub Pages 部署均通过）。
 
 **上手**：`npm install && npm run dev` —— 零配置、零数据库、零环境变量。
 
@@ -187,13 +216,21 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 **上手（当库用）**：`io.github.xiaoxusop:ctxpress-core` **尚未发布到 Maven Central**，
 直接写坐标会解析失败。现在要用的方式是下载 Release 里的 jar 并
 `mvn install:install-file` 装进本地仓库——仓库 README 给了可复制的两步命令。
-**请用 v0.4.2 或更新**：更早版本内嵌的 POM 带着一个没随 Release 发布的父 POM，
+**请用 v0.4.3 或更新**：更早版本内嵌的 POM 带着一个没随 Release 发布的父 POM，
 装完之后宿主工程会报 `Could not find artifact …:ctxpress-parent`，根本用不起来
 （这条是照自己的文档亲手做了一遍才发现的）。
+**v0.4.3 还修好了 `retrieve` 的「逐字节一致」**——v0.4.2 取回会比原文**多一个换行字节**
+（277,282 → 277,283，SHA-256 对不上），**而「逐字节一致」当时就挂在 README 里，是错的**。
+修完对**最终发布的那个 jar 实跑验证过**（2026-09-20 复核：270,000 字节往返，
+sha256 一致、逐字节相同），CI 里也有一条逐字节契约守着。
 发布配置（源码/Javadoc jar、签名、手动触发的发布工作流、POM 元数据）已全部就绪，
 缺的只有 Sonatype 令牌与 GPG 私钥。
 > 另外：报告里现在**一定会写明 token 数字的口径**（`heuristic` 还是 `o200k_base`），
 > 因为同一份内容在两种口径下能差 60%；把预算当硬约束时必须显式传计数器。
+
+> 数字与 Release 验证于提交 `07ff249`（2026-09-20，CI 与 v0.4.3 Release 均通过）。
+> 上面的「逐字节一致」不是照着代码推的：**下载 v0.4.3 的 jar 实跑了一遍**——
+> 270,000 字节的日志压完再取回，长度差 0、sha256 相同、逐字节相等。
 
 ### 🛰️ [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) — MCP 工具面 lockfile
 
@@ -221,6 +258,9 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
   且它们目前都不做基线漂移——互补而非替代
 
 **上手**：下载 [mcp-sentinel.jar](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest) → `java -jar mcp-sentinel.jar lock --config mcp.json`
+
+> 数字与 Release 验证于提交 `17f3466`（2026-09-20，CI 与 v0.5.3 Release 均通过）。
+> v0.5.3 的 jar 已下载核对：内嵌 POM 没有 `<parent>`，**实际打包进去的 jackson-databind 是 2.21.5**。
 
 ## 工程习惯
 
