@@ -227,8 +227,16 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 - **每个项目都配 CI + 单元测试 + 开源协议**，构建产物不进仓库
 - **可复现优先**：评测结果落盘 JSON，数据集带冻结标识与版本要素
 - **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力
-- **产物可获取**：每个项目都发 GitHub Release 并附可直接运行的产物——
-  「下载就能用」比「clone 下来自己构建」的门槛低一个数量级
+- **产物可获取**：**能打包成「一个文件」的四个项目**——`ctxpress`、`mcp-sentinel`、
+  `desensitize-spring-boot-starter`、`aml-compliance-checker`——都发 GitHub Release
+  并附可直接运行的产物（可执行 jar / IDEA 插件 zip）。「下载就能用」比「clone 下来
+  自己构建」的门槛低一个数量级。
+  另外三个不是这个形态，也都有 tag、`clone` 即用：`amlagent` 是全栈应用
+  （Docker + 前后端源码，没有"一个文件"可下）、`letterpress` 的产物是
+  [线上 Demo](https://xiaoxusop.github.io/letterpress/)、`fsc-examples` 是示例集。
+  <!-- 2026-09-19 核对：原文写的是「每个项目都发…并附可直接运行的产物」，
+       而按 API 查，amlagent(2 个 release)/letterpress(1)/fsc-examples(1) 的
+       assets 都是空的。改成分开写，免得访客十秒就查到反证。 -->
 
 ## GitHub 数据
 
