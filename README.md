@@ -25,6 +25,27 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 
 ## 精选项目
 
+<!--
+  ⚠️ 这一节里的**数字都会过期**，改之前先回各自仓库取一次真实值。
+  2026-09-19 同步过一次，当时发现四处对不上（amlagent 后端单测 549→575、
+  letterpress 单测 220→254、契约 104→194、token 节省 64.5%/66.5%→68.9%/70.2%）。
+
+  取数命令（都在对应仓库里跑）：
+
+    amlagent      后端单测/集成/前端 → `python scripts/test_summary.py`（只读真实产物）
+                  Playwright E2E     → CI 的 `Playwright E2E` job 日志里 "N passed"
+    letterpress   单测               → `npm test`（README 徽章与「实测数据」表同步）
+                  契约条数、token 节省 → `npm run verify`（脚本会自己打印；
+                                         README 抄错它会红）
+    desensitize   → `./mvnw -B verify` 的 "Tests run:" 合计
+    mcp-sentinel  → `./mvnw -B verify` 的 "Tests run:" 合计
+    IDEA 插件     → `./gradlew cleanTest test`，再数 build/test-results/test/*.xml
+
+  两个注意：
+  · letterpress 的数字**随内容页数浮动**，是这一节里最常过期的一处；
+  · 别用"最近一次我记得的数"——2026-09-19 那次四处过期，就是那么来的。
+-->
+
 ### 🏦 [amlagent](https://github.com/XIAOXUsop/amlagent) — 商业银行智能反洗钱（AML）尽调 Agent 平台
 
 `Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI ✅ · MIT
@@ -57,7 +78,7 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 | RAG 法规检索 Recall@5 | **93.3%** → 接入 bge 精排 **100%**（nDCG@5 96.7%，无答案拒答 100%） |
 | DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV，多轮迭代基线） |
 | 一级制裁规则漏报 | **0 / 5** |
-| 测试 | 后端单测 **549/550**（549 通过、1 项真实模型评测默认跳过）· 集成回归 **44/44** · 前端 **85** · Playwright E2E **8/8** |
+| 测试 | 后端单测 **575/576**（575 通过、1 项真实模型评测默认跳过）· 集成回归 **44/44** · 前端 **85** · Playwright E2E **8/8** |
 
 > 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 > 测试数字不手写：仓库里 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 现算，
@@ -122,13 +143,13 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 
 - **给 AI 读的 markdown**——Claude Code / Cursor / OpenCode 发 `Accept: text/markdown`，
   本项目用三个平台（Cloudflare / Netlify / Vercel）的边缘函数做内容协商，
-  补上现有集成跳过的托管平台垫片；实测同一页面省 **64.5% / 66.5%** token
+  补上现有集成跳过的托管平台垫片；实测同一页面省 **68.9% / 70.2%** token
 - **中文排版按中文的规矩**——行高 1.75、行宽 `34em`（同时满足中文 30–40 字
   与西文 45–75 字符）、`text-autospace` 中西文自动间距、中文不用斜体
 - **知识层 lint 会拦构建**——`[[方括号]]` 互链的独立知识库，断链使构建中止，
   语义级检查留给 agent（AGENTS.md 约定）
-- **文章阅读页无外链 JavaScript**（首页仅 2.4 KB 内联）· **220 项**单测 ·
-  **104 项**端到端契约 · 对比度亮暗双模式有自动化测试
+- **文章阅读页无外链 JavaScript**（首页仅 2.4 KB 内联）· **254 项**单测 ·
+  **194 项**端到端契约 · 对比度亮暗双模式有自动化测试
   （搜索页按需加载站内 Pagefind，那不算外链，但也别理解成"整站零 JS"）
 
 **上手**：`npm install && npm run dev` —— 零配置、零数据库、零环境变量。
