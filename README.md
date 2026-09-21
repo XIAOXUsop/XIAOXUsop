@@ -175,10 +175,12 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 > **v0.4.4 请勿使用**：那个 tag 的产物——压缩包名与包内 `plugin.xml` 的 `<version>`——**都是 0.4.1**
 > （发布工作流没把 tag 传给构建，取的是 `gradle.properties` 里从 0.4.1 起就没再动过的值）。
 > 装了它的人在插件列表里看到的是 0.4.1，**无法据此确认自己装的是哪一版**。
-> **v0.4.5 起版本号才真正等于 tag**，且发布流程会断言 zip 名 / 包内 jar 名 / `plugin.xml`
-> 三处都等于 tag，不一致就拒绝上传。v0.4.4 的 Release 不删除、不覆盖，只在说明里指向 v0.4.5。
+> **`0.4.5` 起版本号才真正等于 tag**（注意这个 tag **不带 `v` 前缀**，v0.4.0–v0.4.4 都带，
+> 照抄 `v0.4.5` 会 404）。发布流程现在会断言 zip 名 / 包内 jar 名 / `plugin.xml`
+> 三处都等于 tag，不一致就拒绝上传。v0.4.4 的 Release **不删除、不覆盖**；
+> 它的说明里**没有**指向 v0.4.5（`updated_at` 停在 0.4.5 发布之前），要装新版请直接去 Releases 页面。
 >
-> 数字验证于提交 `446ec89`（2026-09-20，Build 通过）。
+> 数字验证于提交 `5988dc3`（2026-09-21，Build 通过）。
 
 ### 🌐 [letterpress](https://github.com/XIAOXUsop/letterpress) — 中文排版讲究、写给人和 AI 读的静态博客
 
@@ -240,13 +242,20 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 **上手（当库用）**：`io.github.xiaoxusop:ctxpress-core` **尚未发布到 Maven Central**，
 直接写坐标会解析失败。现在要用的方式是下载 Release 里的 jar 并
 `mvn install:install-file` 装进本地仓库——仓库 README 给了可复制的两步命令。
-**请用 v0.4.3 或更新**：更早版本内嵌的 POM 带着一个没随 Release 发布的父 POM，
+**请用 v0.4.3 或更新**：**0.4.1 及更早**版本内嵌的 POM 带着一个没随 Release 发布的父 POM，
 装完之后宿主工程会报 `Could not find artifact …:ctxpress-parent`，根本用不起来
-（这条是照自己的文档亲手做了一遍才发现的）。
-**v0.4.3 还修好了 `retrieve` 的「逐字节一致」**——v0.4.2 取回会比原文**多一个换行字节**
-（277,282 → 277,283，SHA-256 对不上），**而「逐字节一致」当时就挂在 README 里，是错的**。
-修完对**最终发布的那个 jar 实跑验证过**（2026-09-20 复核：270,000 字节往返，
-sha256 一致、逐字节相同），CI 里也有一条逐字节契约守着。
+（这条是照自己的文档亲手做了一遍才发现的。**这个毛病 0.4.2 就修了**，
+推荐 0.4.3 是因为下面那件事。）
+**v0.4.3 还修好了 `retrieve` 的「逐字节一致」**——v0.4.2 取回会比原文**多一个字节**，
+**而「逐字节一致」当时就挂在 README 里，是错的**。
+两个版本各下载真 jar 跑同一条链路实测（同一份 270,000 字节的日志）：
+
+| | 原文 | 取回 | 长度差 | sha256 |
+|---|---:|---:|---:|---|
+| v0.4.2 | 270,000 | **270,001** | +1 | 不一致 |
+| v0.4.3 | 270,000 | 270,000 | 0 | 一致 |
+
+CI 里也有一条逐字节契约守着。
 发布配置（源码/Javadoc jar、签名、手动触发的发布工作流、POM 元数据）已全部就绪，
 缺的只有 Sonatype 令牌与 GPG 私钥。
 > 另外：报告里现在**一定会写明 token 数字的口径**（`heuristic` 还是 `o200k_base`），
@@ -287,7 +296,7 @@ sha256 一致、逐字节相同），CI 里也有一条逐字节契约守着。
 > 只有一个提交 `17f3466`，而它**只改了 `.github/workflows/ci.yml`**——冒烟脚本的 classpath
 > 分隔符写死了 `:`，而 Windows 上应该是 `;`。也就是说 **master 比 Release 新的部分里
 > 没有任何运行时改动**，`17f3466` 只是让 CI 在 Windows 上也能跑对。
-> 数字与 Release 验证于 `17f3466`（2026-09-21，CI 通过）；jar 已下载核对：
+> 数字与 Release 验证于 `17f3466`（2026-09-20，CI 通过）；jar 已下载核对：
 > 内嵌 POM 没有 `<parent>`，**实际打包进去的 jackson-databind 是 2.21.5**。
 
 ## 工程习惯
@@ -297,14 +306,19 @@ sha256 一致、逐字节相同），CI 里也有一条逐字节契约守着。
 - **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力
 - **产物可获取**：**能打包成「一个文件」的四个项目**——`ctxpress`、`mcp-sentinel`、
   `desensitize-spring-boot-starter`、`aml-compliance-checker`——都发 GitHub Release
-  并附可直接运行的产物（可执行 jar / IDEA 插件 zip）。「下载就能用」比「clone 下来
-  自己构建」的门槛低一个数量级。
+  并附一个可直接下载的文件。但**「一个文件」不等于「都能直接运行」**，实际分三种：
+  `ctxpress` 与 `mcp-sentinel` 是**可执行 jar**（`java -jar` 就跑）；
+  `desensitize` 是**库 jar**，下载后要 `mvn install:install-file` 装进本地仓库再当依赖用；
+  `aml-compliance-checker` 是 **IDEA 插件 zip**。
+  共同点是「下载就能用」比「clone 下来自己构建」的门槛低一个数量级。
   另外三个不是这个形态，也都有 tag、`clone` 即用：`amlagent` 是全栈应用
   （Docker + 前后端源码，没有"一个文件"可下）、`letterpress` 的产物是
   [线上 Demo](https://xiaoxusop.github.io/letterpress/)、`fsc-examples` 是示例集。
   <!-- 2026-09-19 核对：原文写的是「每个项目都发…并附可直接运行的产物」，
        而按 API 查，amlagent(2 个 release)/letterpress(1)/fsc-examples(1) 的
-       assets 都是空的。改成分开写，免得访客十秒就查到反证。 -->
+       assets 都是空的。改成分开写，免得访客十秒就查到反证。
+       2026-09-22 再收一次：「可直接运行的产物」对 desensitize 不成立——
+       它发的是库 jar，本节上面自己就写着要装进本地仓库才能用。 -->
 
 ## GitHub 数据
 
