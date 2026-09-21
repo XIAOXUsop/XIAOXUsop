@@ -37,6 +37,16 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
   这一轮还给每个项目的数字都加了一行「验证提交：<短 SHA>」——
   数据只引用**已经推送、且 CI 跑过**的提交，免得再出现"主页说绿、仓库其实红"。
 
+  2026-09-21 再同步一次，三处要改：
+  · amlagent 的依赖阻断 **17 → 15 条**（mysql-connector-j 的 2 条升级清除，
+    **由扫描结果确认**，不是升级后的推断），验证提交跟到 `64ad3ce`；
+    并补上"本机也完整跑通过一次"的记录（集成 44/44、E2E 8/8）；
+  · mcp-sentinel 写清 v0.5.3 构建自 `02c18d4`、`17f3466` 只动 CI 配置
+    （运行时代码与 Release 产物无变化）；
+  · letterpress 补一句：对 Pages Demo 跑线上烟测本来就该红，
+    那是已知限制不是部署事故。**「线上内容协商已验证」这句话仍然不写**——
+    真实部署还没有（见下）。
+
   取数命令（都在对应仓库里跑）：
 
     amlagent      后端单测/集成/前端 → `python scripts/test_summary.py`（只读真实产物）
@@ -90,18 +100,27 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 > 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
 > 测试数字不手写：仓库里 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 现算，
 > 再由 CI 的 `README Test Numbers` job 拿 README 与当次产物**逐格比对**，对不上就红。
-> 上表验证于提交 `fe40977`（2026-09-20）。
+> 上表与下面的 CI 状态验证于提交 `64ad3ce`（2026-09-21，8 个 job 全部跑完、没有一个是取消的）。
 
 > **CI 的真实状态，不写「✅」两个字糊过去：8 个 job 里 7 个绿，
-> `Backend Dependency Vulnerability Scan` 是红的。** 那是 **17 条真告警**，归并在
-> `spring-core`、`spring-security-core`、`pgvector`、`mysql-connector-j` 四个依赖上
-> （最高 CVSS 9.8）——**不是工具坏了，也不是随手升个版本就能消掉**：其中一批的修复版本
-> 上游**还没发布**。仓库 README 的「依赖安全」一节逐条写了受影响区间与处理原则；
+> `Backend Dependency Vulnerability Scan` 是红的。** 那是 **15 条真告警**，归并在
+> `spring-core`（12，最高 9.8）、`spring-security-core`（2，最高 9.1）、
+> `pgvector`（1）三个依赖上——**不是工具坏了**，而是这几条在 Spring Boot 3.5.x 线上
+> **没有可取的补丁版**：修复线（6.2.20 / 6.5.12）上游还没发布，能绕开的 7.x 要先迁到
+> Spring Boot 4。仓库 README 的「依赖安全」一节逐条写了受影响区间与处理原则；
 > 门禁宁可一直红着，也没有为了变绿去加一条豁免。
+>
+> 其中 **mysql-connector-j 的 2 条已于 2026-09-21 清除**（17 → 15）：Oracle 把它的版本号
+> 改成了年份制，`26.7.0` 才是修复版，而仓库里此前记的「没有可取的修复版」只查了 9.x 那条线。
+> 这一条**是扫描结果确认的**，不是升级后的推断——同一次扫描的输出里那个包整条消失了。
 
-> 集成回归 **43/44（1 项按前置条件跳过）、0 失败**（Playwright E2E 8/8）。本轮开始时它是 19 项失败，
-> 逐簇查明是三个独立原因：服务端新增校验而测试夹具未同步、法规语料的字节哈希被 Windows 的
-> CRLF 检出破坏、以及测试用本地时区而应用用 UTC。都不是"测试发现了真问题"。
+> 集成回归 **43/44（1 项按前置条件跳过）、0 失败**（Playwright E2E 8/8）。
+> **本机也完整跑通过一次**（2026-09-21，同一提交）：三个依赖容器起在 3307/5433/6379，
+> 集成回归 **44/44**（本机装了精排模型，CI 上跳过的那项在这里真跑），
+> 后端以 Mock 模型启动、不联网，E2E **8/8**——比 CI 多出来的那 1 项就是 44 与 43 的差。
+> 本轮开始时集成回归是 19 项失败，逐簇查明是三个独立原因：服务端新增校验而测试夹具未同步、
+> 法规语料的字节哈希被 Windows 的 CRLF 检出破坏、以及测试用本地时区而应用用 UTC。
+> 都不是"测试发现了真问题"。
 
 ### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
 
@@ -188,6 +207,11 @@ Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内�
 需要部署到 Cloudflare Pages / Netlify / Vercel 之一，仓库已备好三者的垫片与部署说明，
 但**目前尚未部署**，因此"内容协商可用"这句话暂时无法在公开环境直接验证。
 
+> 对着这个 Demo 跑仓库里的线上烟测（`npm run verify:online`）会在协商那几项上报红
+> ——**那是上面这条限制本身，不是部署事故**。同一个脚本会同时证明 Pages 能做到的部分是好的
+> （`.md` 孪生文件的字节数与 SHA-256 与清单一致、清单本身、NDJSON 可逐行解析）。
+> 2026-09-21 实测：7 项不通过，全部落在协商与 `content.ndjson` 的 MIME 上。
+
 ### 🗜️ [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Agent 上下文压缩引擎
 
 `Java 21` `Context Engineering` · CI ✅ · MIT
@@ -259,8 +283,12 @@ sha256 一致、逐字节相同），CI 里也有一条逐字节契约守着。
 
 **上手**：下载 [mcp-sentinel.jar](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest) → `java -jar mcp-sentinel.jar lock --config mcp.json`
 
-> 数字与 Release 验证于提交 `17f3466`（2026-09-20，CI 与 v0.5.3 Release 均通过）。
-> v0.5.3 的 jar 已下载核对：内嵌 POM 没有 `<parent>`，**实际打包进去的 jackson-databind 是 2.21.5**。
+> **v0.5.3 的 Release 构建自提交 `02c18d4`**（tag `v0.5.3` 就指向它）。这之后 master 上
+> 只有一个提交 `17f3466`，而它**只改了 `.github/workflows/ci.yml`**——冒烟脚本的 classpath
+> 分隔符写死了 `:`，而 Windows 上应该是 `;`。也就是说 **master 比 Release 新的部分里
+> 没有任何运行时改动**，`17f3466` 只是让 CI 在 Windows 上也能跑对。
+> 数字与 Release 验证于 `17f3466`（2026-09-21，CI 通过）；jar 已下载核对：
+> 内嵌 POM 没有 `<parent>`，**实际打包进去的 jackson-databind 是 2.21.5**。
 
 ## 工程习惯
 
