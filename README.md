@@ -165,9 +165,13 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 - **标识符语义**（中置信）：变量名/字段名/键名暗示敏感语义且值形似时提示——
   专门兜住**校验位不合法的 mock 数据**，这类纯正则一律放过，却正是真实数据泄漏最常见的形态
 - 每条告警写清判定依据，用户可自行分辨真泄漏与误报；无上下文时不猜测
-- **扫描边界（不覆盖什么）**：动态拼接、外部资源文件、运行时数据、非 Java 语言都不在范围内。
+- **扫描边界（不覆盖什么）**：动态拼接、运行时数据、内容不是 PSI 注释/字面量的文件
+  （`.properties` / `.json` / SQL 实测不报）都不在范围内。
+  **但「非 Java 语言不扫」是错的**——`<localInspection>` 没有 `language` 属性，
+  XML 的注释与属性值实测会被扫（MyBatis mapper 里的身份证与卡号各命中一条），
+  扫 mapper 与 `pom.xml` 里的真实数据本来就是它想做的事。
   标识符语义是启发式（最多向上两层取具名祖先），不是完整语义分析
-- **54 项测试**：28 项纯逻辑 + 26 项真实 IntelliJ fixture（加载 Java PSI 走完整 inspection
+- **55 项测试**：28 项纯逻辑 + 27 项真实 IntelliJ fixture（加载 Java PSI 走完整 inspection
   与 QuickFix 流程、断言告警**区间**只覆盖敏感值、设置存取往返、`plugin.xml` 注册）
 
 **上手**：下载 [zip](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest)，IDEA 里 `Install Plugin from Disk` 即可。
