@@ -369,11 +369,25 @@ CI 里也有一条逐字节契约守着。
 
 **上手**：下载 [mcp-sentinel.jar](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest) → `java -jar mcp-sentinel.jar lock --config mcp.json`
 
-> **当前版本 v0.5.5**（tag `v0.5.5` → 提交 `5d37337`）；jar 已下载核对：
-> 内嵌 POM 没有 `<parent>`，**四个 jackson 构件都在 2.21 线**（databind / core / yaml 2.21.5、
-> annotations 2.21——那个构件本来就是两段式版本号）。
+> **当前版本 v0.5.6**（tag `v0.5.6` → 提交 `4dc58b4`）；jar **已下载实跑核对**。
 >
-> **v0.5.5 修的是两处「检测被静默绕过」**，两处都实测复现过：
+> **v0.5.6 修的是一处「自称合规、实际不合规」**：输出其实过不了官方 SARIF 2.1.0 schema。
+> 实测（**从 Release 下载 v0.5.5 的 jar 跑的，不是看 CI**）：同一个同时含风险 finding
+> 与工具面漂移的扫描，v0.5.5 输出 **5 条结果、9 个 schema 错误**——
+> `logicalLocations` 挂在 `result` 上（它在 `result.locations[]` 底下）、
+> `properties.tags` 写成裸字符串（property bag 里必须是数组）。
+> code scanning 对不合规产物的处理是**整体拒收**，即本地全绿、上传之后什么都没有。
+>
+> 这个缺陷**不可能被原有测试发现**：那些断言全在"取节点比内容"，
+> `path()` 取不到返回 missing node、`.get(0)` 返回 null，**结构错位与内容缺失长得一模一样**。
+> 现在随仓库带官方 schema 与 `scripts/check_sarif_schema.py`（**先自检**：拿两份已知错位的
+> 样例确认它会报错），CI 里也接上了这一步。
+>
+> v0.5.6 的 jar 下载实跑核对：同一场景 **5 条结果、0 个 schema 错误**、
+> 没有未声明的规则、每条都带 `primaryLocationLineHash`。
+> 内嵌 POM 没有 `<parent>`，**四个 jackson 构件都在 2.21 线**。
+>
+> **上一版 v0.5.5 修的是两处「检测被静默绕过」**，两处都实测复现过：
 >
 > - **指纹变了却报「工具面与基线一致，无变化」，退出码 0。** 分级器只枚举它认识的
 >   那几类关键字，其余不产生 `Change`，而 `isClean()` 只看变更集是否为空。
@@ -387,7 +401,8 @@ CI 里也有一条逐字节契约守着。
 > ⚠️ **这次升级会让一些原本静默通过的仓库第一次报红**——那正是它修的东西。
 > 出口是 `--accept-changes`（README 里写明了工作流）。
 >
-> 数字与 Release 验证于提交 `5d37337`（2026-09-22，CI 与 v0.5.5 Release 均通过）。
+> 数字与 Release 验证于提交 `4dc58b4`（2026-09-22，CI 与 v0.5.6 Release 均通过，
+> 且 jar 已下载后实跑校验 SARIF）。
 
 ## 工程习惯
 
