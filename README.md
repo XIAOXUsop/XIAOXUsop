@@ -105,7 +105,7 @@ cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即�
 
 仓库 README 里另有端口表、就绪判断与 `docker compose down / down -v` 的清理方式。
 
-**已验证的数据**（详见仓库内评测报告）
+**已验证的数据**（测试范围与复现方式见 [amlagent README](https://github.com/XIAOXUsop/amlagent#当前验证结果)）
 
 | 评测项 | 结果 |
 |---|---|
