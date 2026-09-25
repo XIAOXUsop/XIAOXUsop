@@ -1,0 +1,26 @@
+name: Profile checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - scripts/**
+      - .github/workflows/profile-check.yml
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -q
+      - run: python3 scripts/check_profile.py --online
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
