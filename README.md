@@ -26,426 +26,162 @@ Java 后端开发，专注 **智能 Agent 应用工程化** 与 **自研工具 /
 ## 精选项目
 
 <!--
-  ⚠️ 这一节里的**数字都会过期**，改之前先回各自仓库取一次真实值。
-  2026-09-19 同步过一次，当时发现四处对不上（amlagent 后端单测 549→575、
-  letterpress 单测 220→254、契约 104→194、token 节省 64.5%/66.5%→68.9%/70.2%）。
-
-  2026-09-20 又同步一次，两处要改、其余对得上：
-  · letterpress 单测 254 → **263**（另外三项数字各自与仓库里的一致）；
-  · amlagent 原先写的「CI ✅」**不成立**——8 个 job 里 7 个绿，依赖扫描是红的，
-    而且那是 17 条**真告警**（不是工具故障），如实写进正文了。
-  这一轮还给每个项目的数字都加了一行「验证提交：<短 SHA>」——
-  数据只引用**已经推送、且 CI 跑过**的提交，免得再出现"主页说绿、仓库其实红"。
-
-  2026-09-21 再同步一次，三处要改：
-  · amlagent 的依赖阻断 **17 → 15 条**（mysql-connector-j 的 2 条升级清除，
-    **由扫描结果确认**，不是升级后的推断），验证提交跟到 `64ad3ce`；
-    并补上"本机也完整跑通过一次"的记录（集成 44/44、E2E 8/8）；
-  · mcp-sentinel 写清 v0.5.3 构建自 `02c18d4`、`17f3466` 只动 CI 配置
-    （运行时代码与 Release 产物无变化）；
-  · letterpress 补一句：对 Pages Demo 跑线上烟测本来就该红，
-    那是已知限制不是部署事故。**「线上内容协商已验证」这句话仍然不写**——
-    真实部署还没有（见下）。
-
-  2026-09-22 第四次同步（这一轮改动最大）。新增一条规则：**凡是「已发布的产物」这句话，
-  都要下载那个产物实跑一遍**，而不是看 CI 绿不绿。本轮据此发了四个版本：
-  · mcp-sentinel **v0.5.5**（修两处静默绕过）、desensitize **v0.6.3**（修三处静默失效，
-    外加一条此前只在 master 上的会话隔离修复）、ctxpress **v0.4.4**（修"仅去空白"档静默改写数值）、
-    amlagent 的 CI 与工作流修复；
-  · 当时 IDEA 插件还没发布包含 `ed85689` 修复的版本；这段是 2026-09-22 的历史记录，
-    当前 0.4.6 发布状态见下方项目介绍。
-
-  2026-09-22 第五次同步（只动了两处，都是本轮实测出来的）：
-  · mcp-sentinel 单测 **131 → 132**，且"输出 SARIF 2.1.0"这句补上了实测经过
-    （用官方 schema 校验，修之前 10 个错误、修完 0 个）；
-  · 其余项目的数字逐个重取，都对得上：letterpress 272、desensitize 110、
-    IDEA 插件 58、ctxpress 保真证书五组全 0、amlagent 15 条阻断。
-  > 教训记在这里：mcp-sentinel 那个数**没有门禁守着**（仓库里没有对账脚本），
-  > 所以它漂了没人知道；letterpress 与 amlagent 的数字有门禁，就没漂。
-  > **同一个事实有几个表面、只改一处等于没改**——主页就是那最后一个表面。
-
-  取数命令（都在对应仓库里跑）：
-
-    amlagent      后端单测/集成/前端 → `python scripts/test_summary.py`（只读真实产物）
-                  Playwright E2E     → CI 的 `Playwright E2E` job 日志里 "N passed"
-    letterpress   单测               → `npm test`（README 徽章与「实测数据」表同步）
-                  契约条数、token 节省 → `npm run verify`（脚本会自己打印；
-                                         README 抄错它会红）
-    desensitize   → `./mvnw -B verify` 的 "Tests run:" 合计
-    mcp-sentinel  → `./mvnw -B verify` 的 "Tests run:" 合计
-    IDEA 插件     → `./gradlew cleanTest test`，再数 build/test-results/test/*.xml
-
-  两个注意：
-  · letterpress 的数字**随内容页数浮动**，是这一节里最常过期的一处；
-  · 别用"最近一次我记得的数"——2026-09-19 那次四处过期，就是那么来的。
+  维护约定：
+  1. 每个精选项目小节必须包含 `验证于提交 `<短SHA>`（YYYY-MM-DD...）`，由 `scripts/check_profile.py` 自动校验。
+  2. 所有测试数字、评测结果与已知限制必须与对应仓库默认分支的最新 README / CI 产物一致。
+  3. 历史版本的缺陷复盘细节留在各仓库的 Release Notes / CHANGELOG，主页只呈现核心设计、最新验证基线与真实边界。
 -->
 
 ### 🏦 [amlagent](https://github.com/XIAOXUsop/amlagent) — 商业银行智能反洗钱（AML）尽调 Agent 平台
 
-`Java 21` `Spring Boot 3` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI 8 项 7 绿 · MIT
+`Java 21` `Spring Boot 3.5` `LangChain4j` `pgvector` `Redis Streams` `Vue 3` · CI 8 项 7 绿 · MIT
 
-> 接收反洗钱预警工单后，可靠地调度 Agent 工作流，自动完成交易画像、股权穿透、制裁名单筛查、
-> 监管法规检索、风险研判与结构化报告生成；用**独立于大模型的护栏**校验结论，高风险工单转人工复核闭环。
+> 接收反洗钱预警工单后，可靠地调度 Agent 工作流，自动完成交易画像、股权穿透、制裁名单筛查、监管法规检索、风险研判与结构化报告生成；用**独立于大模型的确定性护栏**校验结论，高风险工单转人工复核、补充尽调（EDD）与可疑报告（STR）闭环。
 
-- **可靠任务** — Transactional Outbox + Redis Streams，含幂等、重试、死信、租约 fencing、崩溃恢复
-- **证据追溯** — 混合 RAG（向量 + 中文词法 + 加权 RRF + 精排），结论必须引用 `evidenceId`
-- **安全护栏** — 配置化规则 DSL；Prompt 注入三层防护；一级制裁强制 HIGH 并转人工
-- **可观测** — Prometheus 指标 + **OpenTelemetry GenAI 语义约定**追踪：span 按 `chat {模型}`
-  命名，属性涵盖 `gen_ai.usage.*` / `gen_ai.response.finish_reasons` 等，
-  接入任意 OTel 后端无需私有埋点；**span 只记元数据，绝不写入 prompt 或补全内容**
+- **可靠异步工作流** — Transactional Outbox（`PENDING → PUBLISHING → PUBLISHED` 原子抢占）+ Redis Streams 消费组，含版本化租约 + 心跳 fencing、指数退避重试、死信重放与崩溃超时接管
+- **Snapshot First 与证据追溯** — 推理前一次性冻结客户、交易、股权、制裁、关联预警与法规快照（`sourceDigest`）；混合 RAG（PGVector 向量 + 中文词法 + 加权 RRF + 本地 bge 精排）要求关键结论绑定合法 `evidenceId`，并提供可回滚索引供应链与知识投毒隔离
+- **安全护栏与业务闭环** — `risk_rule` 表驱动规则 DSL + Prompt 注入三层防护，一级制裁命中强制 `HIGH` 并转人工 `HOLD`；支持解释核验工作区、限时实名补充尽调（EDD）、可疑交易报告（STR）报送/退回补正、确定性风险优先 SLA 运营队列与 SHA-256 调查档案导出；另提供面向 ADMIN 的客户绑定只读流式 AI 小助
+- **全链路可观测** — Prometheus 指标 + **OpenTelemetry GenAI 语义约定**追踪（`chat {模型}` span，涵盖 `gen_ai.usage.*` / `gen_ai.response.finish_reasons` 等标准属性；**span 只记元数据，绝不写入客户 prompt 或补全正文**）
 
-**上手**：三步——`docker-compose.yml` 里只有基础设施，没有后端/前端镜像，
-所以不存在"一条命令起全栈"。`docker compose up -d` 是后台的，后两步各占一个终端：
+**上手**（三步启动——`docker-compose.yml` 仅含基础设施，后端默认 Mock 模型，无需配置 API Key 即可离线体验完整链路）：
 
 ```bash
 docker compose up -d                       # MySQL(3307) / PGVector(5433) / Redis(6379)，后台运行
-cd backend  && ./mvnw spring-boot:run      # 后端(8080)，默认 Mock 模型，无需 API Key，占一个终端
+cd backend  && ./mvnw spring-boot:run      # 后端(8080)，默认 Mock 模型，占一个终端
 cd frontend && npm install && npm run dev  # 前端(5173)，浏览器打开即可登录，占另一个终端
 ```
-
-仓库 README 里另有端口表、就绪判断与 `docker compose down / down -v` 的清理方式。
 
 **已验证的数据**（测试范围与复现方式见 [amlagent README](https://github.com/XIAOXUsop/amlagent#当前验证结果)）
 
 | 评测项 | 结果 |
 |---|---|
-| RAG 法规检索 Recall@5 | **93.3%** → 接入 bge 精排 **100%**（nDCG@5 96.7%，无答案拒答 100%） |
-| DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV，多轮迭代基线） |
-| 一级制裁规则漏报 | **0 / 5** |
-| 测试 | 后端单测 **575/576**（575 通过、1 项真实模型评测默认跳过）· 集成回归 **43/44**（1 项四路检索 A/B 需本机加载精排模型，CI 上按前置条件跳过）· 前端 **85** · Playwright E2E **8/8** |
+| RAG 法规检索 Recall@5 | **93.3%** → 接入本地 bge 精排 **100%**（MRR 95.6%，nDCG@5 96.7%，无答案拒答 100%） |
+| DeepSeek 真实 Agent 风险准确率 | **44.4% → 100%**（9 条冻结合成 DEV 迭代基线；Guardrails 后 **77.8% → 100%**） |
+| 一级制裁规则漏报 | **0 / 5**（100 条独立合成规则回归案例） |
+| 自动化测试 | 后端单测 **1003/1004**（1003 通过、1 项真实模型评测默认跳过）· 集成回归 **43/44**（本机加载精排模型时 **44/44**）· 前端单测 **85/85** · Playwright E2E **8/8** · Python 脚本测试 **74** 项 |
 
-> 数据集标签为合成数据（`PENDING_DOMAIN_REVIEW`），不等同生产准确率——仓库 README 中已如实标注。
-> 测试数字不手写：仓库里 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 现算，
-> 再由 CI 的 `README Test Numbers` job 拿 README 与当次产物**逐格比对**，对不上就红。
-> 上表与下面的 CI 状态验证于提交 `d53f49a`（2026-09-22，8 个 job 全部跑完、没有一个是取消的）。
-> 那一版还修了两处「检查不会告诉你它想告诉你的事」：
-> **`Secret Scan` 的正则要求值必须带引号**（而 YAML / properties 里 `api-key: <hex>`
-> 这种不带引号的写法才是主流——等于有人把密钥硬编码进配置时它绿着通过），
-> 已改成引号可选并加了**反向探针**（样例运行时拼装，不在文件里留整串，否则这一步会扫到自己）；
-> **每周的依赖修复监视工作流，首次运行必然红**——清单里 `mysql-connector-j` 那条
-> 早就升级清除了却还留着，脚本会为它报「上游已发布修复版」而 `exit 1`。
+> 验证于提交 `a961bdf`（2026-10-07）。测试条数由 `scripts/test_summary.py` 从 Surefire XML 与 Vitest JSON 实算并由 CI 对账；内置数据集标注为 `PENDING_DOMAIN_REVIEW` 合成数据，不等同生产准确率。CI 8 个 job 中 7 项通过，唯一失败项为 `Backend Dependency Vulnerability Scan` 检出的 15 条上游依赖告警（归并于 `spring-core`、`spring-security-core` 与 `pgvector`），由 `scripts/dependency-triage.json` 逐条跟踪复查，不通过调低阈值或加豁免掩盖。
 
-> **CI 的真实状态，不写「✅」两个字糊过去：8 个 job 里 7 个绿，
-> `Backend Dependency Vulnerability Scan` 是红的。** 那是 **15 条真告警**，归并在
-> `spring-core`（12，最高 9.8）、`spring-security-core`（2，最高 9.1）、
-> `pgvector`（1）三个依赖上——**不是工具坏了**，而是这几条在 Spring Boot 3.5.x 线上
-> **没有可取的补丁版**：修复线（6.2.20 / 6.5.12）上游还没发布，能绕开的 7.x 要先迁到
-> Spring Boot 4。仓库 README 的「依赖安全」一节逐条写了受影响区间与处理原则；
-> 门禁宁可一直红着，也没有为了变绿去加一条豁免。
->
-> 其中 **mysql-connector-j 的 2 条已于 2026-09-21 清除**（17 → 15）：Oracle 把它的版本号
-> 改成了年份制，`26.7.0` 才是修复版，而仓库里此前记的「没有可取的修复版」只查了 9.x 那条线。
-> 这一条**是扫描结果确认的**，不是升级后的推断——同一次扫描的输出里那个包整条消失了。
+### 🖥️ [Pi-desktop](https://github.com/XIAOXUsop/Pi-desktop) — 基于官方 Pi 的本地编程 Agent 桌面应用
 
-> 集成回归 **43/44（1 项按前置条件跳过）、0 失败**（Playwright E2E 8/8）。
-> **本机也完整跑通过一次**（2026-09-21，同一提交）：三个依赖容器起在 3307/5433/6379，
-> 集成回归 **44/44**（本机装了精排模型，CI 上跳过的那项在这里真跑），
-> 后端以 Mock 模型启动、不联网，E2E **8/8**——比 CI 多出来的那 1 项就是 44 与 43 的差。
-> 本轮开始时集成回归是 19 项失败，逐簇查明是三个独立原因：服务端新增校验而测试夹具未同步、
-> 法规语料的字节哈希被 Windows 的 CRLF 检出破坏、以及测试用本地时区而应用用 UTC。
-> 都不是"测试发现了真问题"。
+`TypeScript` `Electron 44` `Pi SDK` `Node.js 24` · CI ✅ · MIT
 
-### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护（脱敏 + 可逆假名化）
+> 打开本机代码库，通过对话完成代码阅读、文件编辑、受控命令执行与差异审阅；内置独立进程恢复、字节级文件检查点撤销，以及 `/plan` 和 `/goal` 工作流扩展。
 
-`Java 21` `Spring Boot 3` `Jackson` `HMAC` · CI ✅ · MIT
+- **独立执行进程与多模型接入** — Electron 渲染层开启严格上下文隔离与 CSP，Pi 执行层在独立 Worker 进程运行；内置 DeepSeek、OpenAI、Anthropic、智谱 GLM、Kimi、通义千问等 11 家提供方预设（1,262 个目录模型）及 OpenAI Chat / Responses、Anthropic Messages 自定义接入，密钥经 `safeStorage` 加密存储
+- **字节级文件检查点与冲突保护** — 自动记录任务开始前的原始文件字节（保存在项目 `.agent/checkpoints/`），支持新建、修改、删除文件的差异预览、一键撤销与撤回撤销；若任务后发生人工编辑则自动识别冲突并阻止覆盖
+- **崩溃恢复与子进程生命周期监督** — Worker 意外中断后保留未完成输出与持久运行状态，支持人工核实待确认工具后继续任务，**已确认的写操作或工具绝不自动重放**；子进程命令由 Supervisor 统一托管并在宿主退出时清理后代进程
+- **工作流与资源体系** — 内置 `/plan`（只读探索 → 澄清问题 → 提交计划 → 确认后按原权限执行）与 `/goal`（带 token/轮次预算与独立验证回合的持续目标推进）扩展；支持本地、npm 与 Git 来源的扩展、技能、提示模板与主题管理
 
-> 两层能力：**接口返回值脱敏**（`@Sensitive` 注解，Jackson 序列化层，业务零侵入），
-> 以及 **大模型输入输出脱敏**——发送前把敏感值换成确定性令牌，收到回复后自动还原。
+**上手**：在 [v0.1.4 Release](https://github.com/XIAOXUsop/Pi-desktop/releases/tag/v0.1.4) 下载 `Pi-desktop-Setup-0.1.4-x64.exe` 安装版或 `Pi-desktop-0.1.4-Windows-x64.zip` 免安装版（均内置 Node.js 24 与 npm 运行时，无需本地预装开发环境）。
 
-- 掩码解决不了大模型场景：它保留部分原文（仍是个人信息），且模型无法凭掩码
-  在整段对话里认出"是同一个人"；确定性令牌两者都能解决
-- 令牌 = `HMAC-SHA256(密钥, 类型|版本|原文)` 截断为 **128 bit**（`TYPE_v2_<32 位十六进制>`）：
-  **不含原文、跨轮次稳定、无私钥不可伪造**。早先的 40 bit 在约 100 万条明文下就有约 50%
-  碰撞概率，届时保险库会把两个真实身份混成一个人
-- **令牌碰撞是硬失败**：同令牌不同原文直接抛异常并保留原映射，不覆盖也不静默沿用——
-  两种"将就"都会把某人的数据还原成另一个人的，且没有任何外部症状
-- **会话级保险库**：映射按 `VaultScope` 分表，会话结束 `forget(scope)` 整体撤销不波及其他会话；
-  支持过期时间；还原可挂审计回调（**只给作用域与类型，不给原文**）。
-  文档里也写明它**不**改变什么——令牌仍是确定性的，跨会话同串，那是跨轮次一致性的来源
-  > ⚠️ **这条在 v0.6.2 及更早的产物里不成立**：`VaultScope` 当时只拦 null 与 blank，
-  > 名叫 `"session-a\u0000evil"` 的作用域会被 `forget("session-a")` **连带删掉**，
-  > 也被 `size("session-a")` 算进去（跨会话的映射销毁与计数错乱）。
-  > **v0.6.3 起才真的成立**——那条修复此前只存在于 master，从没进过任何 release。
-- 当前源码提供可选的 AES-GCM 单机文件保险库，支持重启恢复、过期、撤销与密钥轮换；
-  超过 64 MiB 的写入会拒绝并保留旧文件。跨主机共享和 KMS 托管仍需业务侧实现。
-- 未知令牌保持原样而非猜测性替换；默认关闭，缺密钥在**启动期失败**而不是产出弱令牌
-- **模型调用装饰器**：出站脱敏 → 调用 → 入站还原 → **异常消毒**。
-  模型 SDK 常把请求内容带进异常 message，这一层会消毒它，并在请求含敏感内容时
-  不保留底层堆栈（堆栈最常被打印，挂上去等于把原文放进日志）。不支持流式，
-  因为令牌可能被切成两半，逐块还原要么漏、要么吐出半个令牌
-- **测试覆盖**碰撞失败、v1/v2 版本解析、会话隔离与并发、装饰器异常路径、
-  两组 `ApplicationContextRunner` 集成测试、常见书写形态的提示词脱敏、
-  以及"掩码不得原样返回输入"这条不变式；最新条数以项目 CI 和 README 的对账结果为准
+> 验证于提交 `10e583b`（2026-10-16，69 项核心测试 + 145 项桌面与工作流测试共 **214 项**自动化测试通过，另有真实 Electron 窗口检查、移除系统 Node 后的独立打包运行时验证、旧版升级迁移测试及 DeepSeek 20 任务评测闭环）。当前 Windows 发行包未配置代码签名证书，文件检查点不恢复数据库或外部网络副作用。
 
-**上手**：下载 [jar](https://github.com/XIAOXUsop/desensitize-spring-boot-starter/releases/latest) 装进本地仓库，加 `@Sensitive` 注解即可，零配置。
-（Maven Central 发布配置同样已就绪，只差凭据。）
+### 🩺 [ai-plugin-doctor](https://github.com/XIAOXUsop/ai-plugin-doctor) — AI 插件跨客户端配置诊断与发行验收 CLI
 
-> 数字与 Release 验证于提交 `36c1598`（2026-09-22，CI 与 v0.6.3 Release 均通过）。
-> **v0.6.3 的 jar 已下载实跑核对**：那个产物能认出 15 位老身份证、`+86` 前缀的手机号、
-> 带分隔符的手机号与银行卡（`6222 0202 0011 2347`）——这几类在 v0.6.2 的产物里
-> **一条都不报**，会原样发给外部模型。内嵌 POM 仍**没有 `<parent>`**，
-> `jackson-bom` 仍钉在 **2.21.5**（v0.6.1 是 2.21.2，命中 5 条公告）。
+`TypeScript` `MCP` `C# Native` `Windows x64` · CI ✅ · MIT
 
-### 🛡️ [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) — IDEA 敏感数据合规插件
+> 扫描 Codex CLI、Claude Code、Cursor 和 VS Code 的本地 MCP 配置，定位覆盖链与故障原因并执行受限修复；同时支持在隔离环境中驱动真实 Codex CLI 与 Claude Code 完成 `stdio` MCP 工具的发现、选择与调用验收。
 
-`Kotlin` `IntelliJ Platform SDK` · CI ✅ · Apache-2.0
+- **四客户端配置扫描与受限修复** — 被动扫描无需模型密钥、不拉起外部服务，覆盖 24 类常见配置故障（语法错误、方言差异、缺失变量、作用域覆盖、同名冲突、脚本启动器等）与配对正常对照；支持保留注释与格式的 JSON/JSONC 原子修复（备份文件受 Windows `FileSecurity` Owner-Only ACL 保护）及 Codex TOML 手工补丁导出
+- **E0–E4 分层证据与真实客户端闭环** — 通过透明 `stdio` 代理在隔离工作区启动真实 Codex CLI 与 Claude Code，分别采集 **E0 静态配置、E1 协议握手、E2 客户端发现、E3 模型任务调用与参数断言** 四层独立状态（E4 桌面体验单列人工签署），正负例与启动失败严格归因
+- **防篡改报告与版本回归对比** — 生成本地 HTML/JSON 证据包并校验 `static.json`、`probe.json`、配置快照及各 trial 日志的 SHA-256（任何证据篡改或缺失均拒绝重生成报告）；`compare` 支持插件升级或 schema 变更前后的回归门禁（E2/E3 退化返回退出码 2），Windows Job Object 确保超时或中断时彻底回收后代进程树
+- **可复现源码包交付** — `npm run package:source` 生成固定文件顺序、时间戳与权限的源码 ZIP 及 `SOURCE_MANIFEST.json`，Windows CI 自动执行解压、独立重建与清单完整性校验
 
-> 检出 Java 注释与字符串字面量中的身份证 / 银行卡 / 手机号明文，
-> **一键替换为等长脱敏值**；v0.3 起采用**双信号判定**并给出判定依据。
+**上手**：
 
-- **值形态**（高置信）：身份证过 ISO 7064 校验位、银行卡过 Luhn，值本身即可自证
-- **标识符语义**（中置信）：变量名/字段名/键名/方法名暗示敏感语义且值形似时提示——
-  专门兜住**校验位不合法的 mock 数据**，这类纯正则一律放过，却正是真实数据泄漏最常见的形态
-  > ⚠️ **其中「键名」与「方法名」那两路，在 v0.4.5 的产物里从来没生效过。**
-  > `identifierHint` 当时只向上找两层的 `PsiNamedElement`，而 `PsiMethodCallExpression`
-  > **不是** `PsiNamedElement`——于是 `assertEquals("1101…", …)`、`buildDto("4539…")`、
-  > `Map.of("cardNo", "4539…")` 这些**测试与 mock 数据最标准的写法**一条都不报，
-  > 而注释里恰好写着"方法名同样携带语义（`setIdCard(...)` 的参数本就该被当作身份证看待）"。
-  > 修复在 commit `ed85689`，**晚于 v0.4.5**；0.4.6 发布提交已包含它，
-  > 公开 ZIP 已下载并核对版本与结构；干净 IDE 安装和启动仍待验收。
-- 每条告警写清判定依据，用户可自行分辨真泄漏与误报；无上下文时不猜测
-- **扫描边界（不覆盖什么）**：动态拼接、运行时数据、内容不是 PSI 注释/字面量的文件
-  （`.properties` / `.json` / SQL 实测不报）都不在范围内。
-  **但「非 Java 语言不扫」是错的**——`<localInspection>` 没有 `language` 属性，
-  XML 的注释与属性值实测会被扫（MyBatis mapper 里的身份证与卡号各命中一条），
-  扫 mapper 与 `pom.xml` 里的真实数据本来就是它想做的事。
-  标识符语义是启发式（向上取最近的具名祖先 / 方法名 / 成对实参里的键名，最多三层），
-  不是完整语义分析
-- **58 项测试**：30 项纯逻辑 + 28 项真实 IntelliJ fixture（加载 Java PSI 走完整 inspection
-  与 QuickFix 流程、断言告警**区间**只覆盖敏感值、设置存取往返、`plugin.xml` 注册、
-  以及"掩码不许把原文原样还回来"这条不变式）
+```powershell
+npm ci --ignore-scripts && npm run build
+node dist/src/cli.js scan --workspace "D:\你的项目" --clients codex,claude,cursor,vscode --out runs/config-scan
+```
 
-**上手**：下载 [zip](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest)，IDEA 里 `Install Plugin from Disk` 即可。
+> 验证于提交 `2eb1f14`（2026-10-16，Windows CI 与本地 **163 项**测试全部通过，覆盖 24 类故障与配对对照、金丝雀密钥零泄漏、Job Object 进程树清理、ACL 备份与报告防篡改校验）。自动化工具调用验收仅覆盖本地 `stdio` MCP；Streamable HTTP、OAuth 与 IDE 图形界面会话保留人工取证流程。
 
-> **v0.4.4 请勿使用**：那个 tag 的产物——压缩包名与包内 `plugin.xml` 的 `<version>`——**都是 0.4.1**
-> （发布工作流没把 tag 传给构建，取的是 `gradle.properties` 里从 0.4.1 起就没再动过的值）。
-> 装了它的人在插件列表里看到的是 0.4.1，**无法据此确认自己装的是哪一版**。
-> **`0.4.5` 起版本号才真正等于 tag**（注意这个 tag **不带 `v` 前缀**，v0.4.0–v0.4.4 都带，
-> 照抄 `v0.4.5` 会 404）。发布流程现在会断言 zip 名 / 包内 jar 名 / `plugin.xml`
-> 三处都等于 tag，不一致就拒绝上传。v0.4.4 的 Release **不删除、不覆盖**；
-> 它的说明里**没有**指向 v0.4.5（`updated_at` 停在 0.4.5 发布之前），要装新版请直接去 Releases 页面。
->
-> 58 项测试验证于提交 `ed85689`（2026-09-22，`./gradlew cleanTest test` 和 `buildPlugin` 通过）。
-> **v0.4.5 的 ZIP 不含这批修复**。0.4.6 已发布，目标提交包含修复；
-> 公开 ZIP 已独立下载并核对版本与结构；干净 IDE 安装和启动仍待验收。
+### 🛰️ [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) — MCP 工具面安全扫描器与 Lockfile
 
-### 🌐 [letterpress](https://github.com/XIAOXUsop/letterpress) — 中文排版讲究、写给人和 AI 读的静态博客
+`Java 21` `MCP` `Security` `SARIF 2.1.0` · CI ✅ · MIT
 
-`Astro 7` `TypeScript` `Content Negotiation` · CI ✅ · MIT
+> 把 MCP 服务器的工具定义锁进版本库（`mcp-sentinel.lock.json`），让"工具描述或 schema 被悄悄改写"像代码变更一样出现在 PR diff 与 CI 门禁中。
 
-> 零配置就能跑，改一个文件就能上线；文章给人读，markdown 给 AI 读。
-> 三个差异化点都对应「别人没做的一步」：
-
-- **给 AI 读的 markdown**——Claude Code / Cursor / OpenCode 发 `Accept: text/markdown`，
-  本项目用三个平台（Cloudflare / Netlify / Vercel）的边缘函数做内容协商，
-  补上现有集成跳过的托管平台垫片；实测同一页面省 **68.6% / 69.7%** token
-- **中文排版按中文的规矩**——行高 1.75、行宽 `34em`（同时满足中文 30–40 字
-  与西文 45–75 字符）、`text-autospace` 中西文自动间距、中文不用斜体
-- **知识层 lint 会拦构建**——`[[方括号]]` 互链的独立知识库，断链使构建中止，
-  语义级检查留给 agent（AGENTS.md 约定）
-- **文章阅读页无外链 JavaScript**（首页仅 2.5 KB 内联）· **272 项**单测 ·
-  **196 项**端到端契约 · 对比度亮暗双模式有自动化测试
-  （搜索页按需加载站内 Pagefind，实测 gzip 146 KB——那不算外链，
-  但也别理解成"整站零 JS"）
-
-> 数字验证于提交 `e4bb066`（2026-09-22，CI 与 GitHub Pages 部署均通过，272/196 在本地重跑过）。
-> **单测条数现在有门禁了**（`npm run verify:testcount`）：`npm test` 写出一份 JSON 报告，
-> 这个脚本拿它与 README 徽章、README 英文段、README 实测表、`docs/cli.md` 四处对账，
-> **读不到报告就失败**。此前这四个数没有东西守着，一度同时漂到 263（实测 270）。
-
-**上手**：`npm install && npm run dev` —— 零配置、零数据库、零环境变量。
-
-Demo：https://xiaoxusop.github.io/letterpress/ —— **该环境不支持内容协商**
-（GitHub Pages 改不了响应头）。要 curl 验证 `Accept: text/markdown`，
-需要部署到 Cloudflare Pages / Netlify / Vercel 之一，仓库已备好三者的垫片与部署说明，
-但**目前尚未部署**，因此"内容协商可用"这句话暂时无法在公开环境直接验证。
-
-> 对着这个 Demo 跑仓库里的线上烟测
-> （`SITE_ORIGIN=https://xiaoxusop.github.io/letterpress npm run verify:online`）会在协商那几项上报红
-> ——**那是上面这条限制本身，不是部署事故**。同一个脚本会同时证明 Pages 能做到的部分是好的
-> （`.md` 孪生文件的字节数与 SHA-256 与清单一致、清单本身、NDJSON 可逐行解析）。
-> 2026-09-21 实测：7 项不通过，全部落在协商与 `content.ndjson` 的 MIME 上。
-> **命令里那个 `SITE_ORIGIN=` 不能省**——只写 `npm run verify:online` 的话，
-> 脚本会打印「未配置线上地址，无法进行线上烟测」并**一条断言都不跑**。
-> 主页原先给的正是省略了它的写法。
-
-### 🗜️ [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Agent 上下文压缩引擎
-
-`Java 21` `Context Engineering` · CI ✅ · MIT
-
-> 在工具输出、日志、RAG 片段进入 LLM 之前，按你给出的 token 预算压缩它们——
-> **确定性、可审计、可逆**。
-
-- **输出 ≤ 你给的预算**，做不到时报告里显式给出 `overBudgetBy`，**绝不静默超标**。
-  做不到有两种成因，报告里的动作名分开写：**受保护内容本身就超预算**
-  （出口是放宽保护额度）与**压根没有可裁的结构**（出口是提高预算）。
-  此前一律报前面那个名字，于是后者会被引到错的那条路上——实测一份 20 字段的 JSON
-  在 `protectedSegments=0` 时报的正是"除受保护值外已无可裁剪"，怎么调保护额度都不会动。
-  这条契约由一张 **6 类语料 × 10 档预算的矩阵**逐格断言，CI 当门禁跑：**遵守率 100%**
-- **保真评测（离线，无模型）**：命中保护规则的关键信息**任何预算下召回 100%**
-  （对照组朴素头截断在小预算下只有 33%）；6 个用例 **0 行凭空生成**——
-  输出的每一行要么逐字来自输入、要么匹配已声明的省略标记文法
-- **可逆**：压掉的原文进内容寻址归档，**归档引用通常会被写进压缩内容本身**，
-  读到这段内容的模型自己就知道有东西被省略、以及要得回来。
-  （「通常」不是含糊：根是数组、根数组自己没被截断、挂掉的又是内层数组、
-  全程没有字符串可承载时，引用进不了内容——动作名会明说 `ARCHIVE_REF_NOT_EMBEDDABLE`。
-  归档本身始终可取回，缺的只是"模型自己知道"。这一格仓库 README 里如实写明了。）
-  命令行 `--archive` 写文件归档、`retrieve` 取回，**逐字节一致**
-- **不调用模型**：同输入必然同输出（可写断言测试）、零增量成本、不会引入原文没有的事实
-
-> **如实标注局限**：未受保护的关键信息召回与最朴素的均匀行采样相当（略低）——
-> 差距来自省略标记的开销（一个标记约 7 token、一行日志约 11 token），
-> 那是"可审计 + 可取回"的代价。另外尚无下游任务精度评测（GSM8K 那类需要真调模型、
-> 要花钱，且对抽取式压缩器用错了指标）。仓库 README 中已如实标注。
-
-**上手（命令行）**：下载 [ctxpress.jar](https://github.com/XIAOXUsop/ctxpress/releases/latest) → `java -jar ctxpress.jar analyze --max-tokens 8000 app.log`
-
-**上手（当库用）**：`io.github.xiaoxusop:ctxpress-core` **尚未发布到 Maven Central**，
-直接写坐标会解析失败。现在要用的方式是下载 Release 里的 jar 并
-`mvn install:install-file` 装进本地仓库——仓库 README 给了可复制的两步命令。
-**请用 v0.4.4 或更新**：**0.4.1 及更早**版本内嵌的 POM 带着一个没随 Release 发布的父 POM，
-装完之后宿主工程会报 `Could not find artifact …:ctxpress-parent`，根本用不起来
-（这条是照自己的文档亲手做了一遍才发现的。**这个毛病 0.4.2 就修了**。）
-**v0.4.3 修好了 `retrieve` 的「逐字节一致」**——v0.4.2 取回会比原文**多一个字节**，
-**而「逐字节一致」当时就挂在 README 里，是错的**。
-两个版本各下载真 jar 跑同一条链路实测（同一份 270,000 字节的日志）：
-
-| | 原文 | 取回 | 长度差 | sha256 |
-|---|---:|---:|---:|---|
-| v0.4.2 | 270,000 | **270,001** | +1 | 不一致 |
-| v0.4.3 | 270,000 | 270,000 | 0 | 一致 |
-
-CI 里也有一条逐字节契约守着。
-
-> **v0.4.3 另有一处会改数据的缺陷，v0.4.4 才修**：「仅去空白」那一档其实是"解析再序列化"，
-> 会静默改写数值字面量——实测 `1e400` → `"Infinity"`（**数字变成了字符串**）、
-> `99999999999999999999.99` → `1.0E20`、`1e-400` → `0.0`，
-> 而报告里只写 `MINIFIED_ONLY`、归档引用是 null，**没有任何标记说值被改过**。
-> v0.4.4 把这一档改成纯文本扫描（输出逐字节来自输入），第二、三档改走 BigDecimal 精确承载。
-> **v0.4.3 及更早：别拿它压带数值的 JSON。**
-发布配置（源码/Javadoc jar、签名、手动触发的发布工作流、POM 元数据）已全部就绪，
-缺的只有 Sonatype 令牌与 GPG 私钥。
-> 另外：报告里现在**一定会写明 token 数字的口径**（`heuristic` 还是 `o200k_base`），
-> 因为同一份内容在两种口径下能差 60%；把预算当硬约束时必须显式传计数器。
-
-> 数字与 Release 验证于提交 `6fdfa12`（2026-09-22，CI 与 v0.4.4 Release 均通过）。
-> 上面的「逐字节一致」不是照着代码推的：**下载 v0.4.3 的 jar 实跑了一遍**——
-> 270,000 字节的日志压完再取回，长度差 0、sha256 相同、逐字节相等。
-> **v0.4.4 的 jar 同样下载实跑核对过**：`998877665544332211.99` 原样保留，
-> `1e400` / `1e-400` 的值保住（不再变成 `"Infinity"` 或 `0.0`），归档取回仍逐字节一致。
->
-> ⚠️ 验产物时踩过一个坑，一并记下：第一次用 Python 生成输入，
-> `json.dumps({'amount': 998877665544332211.99})` —— **Python 的 float 装不下这个精度**，
-> 写文件的那一刻它就已经变成 `9.988776655443322e+17` 了。
-> 我据此说"产物没修好"，其实是**我的探针错了**。
-
-### 🛰️ [mcp-sentinel](https://github.com/XIAOXUsop/mcp-sentinel) — MCP 工具面 lockfile
-
-`Java 21` `MCP` `Security` · CI ✅ · MIT
-
-> 把 MCP 服务器的工具定义锁下来、提交进版本库，让"配置被悄悄改了"像"代码被改了"
-> 一样出现在 diff 与评审里。
-
-- 针对 **rug pull**：名字与 schema 都不变、只悄悄改描述。扫描器每次拿到的都是当前版本，
-  **没有历史对照就发现不了**——这不是"规则多少"的差别，而是"有没有基线"的差别
-- **fail-closed**：`scan` 默认要求基线可用，缺失 / 损坏 / 版本不兼容一律退出 5，
-  **不会退化成"只跑风险规则然后返回 0"**——一次漏拷的 lock 文件若表现为干净通过，
-  门禁就把它最该守的东西放过去了。确实只要静态规则时用 `--risk-only` 显式声明
-- **两种传输**：stdio（本地子进程）与 **Streamable HTTP**（远程端点）。
-  请求头里的密钥用 `${环境变量名}` 引用，配置里不放明文；引用了不存在的变量
-  在连接前就按配置错误失败，而不是发一个空头出去。换传输不改变任何一条检测语义
-- 输出 **SARIF 2.1.0**（2026-09-22 用**官方 schema 实测**过：修之前每次非空运行
-  带 10 个结构错误——`logicalLocations` 挂错层级、`properties.tags` 写成字符串，
-  而本地测试全绿；现在 0 错误，并把校验接进了 CI）；退出码可作 CI 门禁
-  （0 通过 / 1 用法 / 2 连接 / 3 风险 / 4 未批准漂移 / 5 基线不可用 / 6 产物写入失败）。
-  **同时命中多条时按 `4 > 3 > 6`**——退出码只有一个，注解可以有好几行；
-  基线不可用（5）也发 `::error::`，在 CI 上看得见
-- 批准变更时打印**审批摘要**（批准了哪些工具、级别、前后摘要、基线新指纹），
-  并明确静态风险发现不参与批准——它们描述的是工具面本身有问题，不是"和上次不一样"；
-  没有变更可批准时**一个字节都不写**——否则 PR 里会多出一条只有时间戳的 diff，
-  而基线 diff 正是这个工具唯一能被评审的东西
-- **132 项测试**（含真实 stdio 子进程与本地 Streamable HTTP 服务器的端到端）
-- **完全离线**（对比 snyk / cisco 的 MCP 扫描器需要云 API 或 LLM Key），
-  且它们目前都不做基线漂移——互补而非替代
+- **语义规范化指纹** — 对 `required` / `enum` / `type` / `allOf` / `anyOf` / `oneOf` 等集合关键字排序去重并对数值归一化，保留 `prefixItems` 等顺序敏感结构，避免服务端集合迭代顺序不同造成误报
+- **按 MCP 风险轴分级与兜底** — 将 **27 类**工具面变更分为 `DANGEROUS`（如描述改写、新增可选参数、未识别嵌套变更 `UNGRADED_SCHEMA_CHANGE`）、`BREAKING`（如新增必填参数）与 `INFO`；钉死"**指纹变化 ⇒ 至少一条变更**"不变量，防止嵌套 schema 投毒静默绕过
+- **内容绑定的审批继承** — `--accept-changes` 将变更类型、工具名与变更后内容摘要写入基线并打印审批摘要（批准 Beta 不会自动放行后续改成的 Gamma）；静态风险发现不参与批准，无变更可批准时不改写文件时间戳
+- **16 条离线静态规则与 Fail-Closed 门禁** — 规则执行前完成 Unicode NFKC 归一、零宽/双向控制字符剥离与西里尔/希腊同形字折叠；支持 `stdio` 与 `streamable-http`（连接超时与请求超时独立控制，显式拒收 `sse` 别名）；基线缺失或损坏一律以退出码 **5** 失败（仅在显式声明 `--risk-only` 时跳过漂移比对），输出通过官方 Schema 校验的 SARIF 2.1.0 报告
 
 **上手**：下载 [mcp-sentinel.jar](https://github.com/XIAOXUsop/mcp-sentinel/releases/latest) → `java -jar mcp-sentinel.jar lock --config mcp.json`
 
-> **当前版本 v0.5.6**（tag `v0.5.6` → 提交 `4dc58b4`）；jar **已下载实跑核对**。
->
-> **v0.5.6 修的是一处「自称合规、实际不合规」**：输出其实过不了官方 SARIF 2.1.0 schema。
-> 实测（**从 Release 下载 v0.5.5 的 jar 跑的，不是看 CI**）：同一个同时含风险 finding
-> 与工具面漂移的扫描，v0.5.5 输出 **5 条结果、9 个 schema 错误**——
-> `logicalLocations` 挂在 `result` 上（它在 `result.locations[]` 底下）、
-> `properties.tags` 写成裸字符串（property bag 里必须是数组）。
-> code scanning 对不合规产物的处理是**整体拒收**，即本地全绿、上传之后什么都没有。
->
-> 这个缺陷**不可能被原有测试发现**：那些断言全在"取节点比内容"，
-> `path()` 取不到返回 missing node、`.get(0)` 返回 null，**结构错位与内容缺失长得一模一样**。
-> 现在随仓库带官方 schema 与 `scripts/check_sarif_schema.py`（**先自检**：拿两份已知错位的
-> 样例确认它会报错），CI 里也接上了这一步。
->
-> v0.5.6 的 jar 下载实跑核对：同一场景 **5 条结果、0 个 schema 错误**、
-> 没有未声明的规则、每条都带 `primaryLocationLineHash`。
-> 内嵌 POM 没有 `<parent>`，**四个 jackson 构件都在 2.21 线**。
->
-> **上一版 v0.5.5 修的是两处「检测被静默绕过」**，两处都实测复现过：
->
-> - **指纹变了却报「工具面与基线一致，无变化」，退出码 0。** 分级器只枚举它认识的
->   那几类关键字，其余不产生 `Change`，而 `isClean()` 只看变更集是否为空。
->   实测四种改法（**嵌套 object 里加参数**、参数加 `const`、`items` 放宽类型、顶层加 `allOf`）
->   **指纹全变了、变更集全是空的**——rug pull 的完整形态（"名字没变、参数多加一层"）
->   只要写进已有 object 参数的嵌套里就报绿。
-> - **不可见字符集有两份、漂开了。** `U+2066–U+2069`（双向隔离）不在规则那份里，
->   于是把关键词中间插一个字符就能绕开 `HIDDEN_INSTRUCTION`，而「零宽/双向控制字符」
->   这条规则本身也不报它——**退出码 0、零 finding**。
->
-> ⚠️ **这次升级会让一些原本静默通过的仓库第一次报红**——那正是它修的东西。
-> 出口是 `--accept-changes`（README 里写明了工作流）。
->
-> 数字与 Release 验证于提交 `4dc58b4`（2026-09-22，CI 与 v0.5.6 Release 均通过，
-> 且 jar 已下载后实跑校验 SARIF）。
+> 验证于提交 `3fce373`（2026-09-25，**132 项**测试通过，含真实 `stdio` 子进程、本地 Streamable HTTP 端到端、SARIF 2.1.0 官方 Schema 校验及发版前双道预检闸；v0.5.6 可执行 JAR 已下载实跑核验）。本工具只做离线工具定义锁定与静态分析，不拦截运行时 `tools/call`。
+
+### 🗜️ [ctxpress](https://github.com/XIAOXUsop/ctxpress) — Java Agent 上下文确定性压缩引擎
+
+`Java 21` `Context Engineering` `BPE Tokenizer` · CI ✅ · MIT
+
+> 在工具输出、应用日志、RAG 片段进入 LLM 之前，按给定的 token 预算执行**确定性、可审计、可逆**的抽取式压缩，不调用大模型、零增量推理成本。
+
+- **严格预算契约** — 支持 `o200k_base` 等真实 BPE 词表硬预算（`strictBudget`）与启发式安全余量；内容放得下时零改动，受保护内容本身超预算或无结构可裁时分动作名如实上报 `overBudgetBy`，**绝不静默超标**（由 **6 类语料 × 10 档预算矩阵**在 CI 逐格守卫，遵守率 **100%**）
+- **按体裁处理而非切字符串** — JSON 三档压缩（第一档纯文本扫描去空白逐字节无损，二/三档数组头尾采样与字符串截断并用 `BigDecimal` 精确保值）；LOG 按行折叠相邻重复、保留故障行并设 60% 保护占比降级闸门；TEXT 按句切分并做跨片段句子级去重
+- **内容寻址可逆归档** — 被省略原文写入内存或跨进程追加式文件归档（`ORIG-<sha256前16位>`），归档引用嵌入压缩结果中供模型按需调用，命令行 `retrieve` 取回与原文**逐字节一致**
+- **离线保真评测** — 命中保护规则的关键信息在任意预算下召回率 **100%**（朴素头截断在小预算下仅 33%）；日志、折叠、JSON、文本、数值五组路径保真证书均为 **0 处凭空生成**
+
+**上手**：下载 [ctxpress.jar](https://github.com/XIAOXUsop/ctxpress/releases/latest) → `java -jar ctxpress.jar analyze --max-tokens 8000 app.log`（作为 Maven 库引用时按仓库说明从 Release 安装自包含 POM 的 `v0.4.4` JAR；Maven Central 发布工作流已就绪，待配置凭据）。
+
+> 验证于提交 `daeb3a2`（2026-09-25，**104 项**离线测试通过：core 78 + tokenizer 11 + cli 15，v0.4.4 Release JAR 已下载实跑核对）。当前提供离线保真评测（关键信息召回 + 零幻觉证书），尚未包含调用真实大模型的下游任务准确率评测。
+
+### 🔌 [desensitize-spring-boot-starter](https://github.com/XIAOXUsop/desensitize-spring-boot-starter) — 敏感数据防护 Spring Boot Starter
+
+`Java 21` `Spring Boot 3` `Jackson` `HMAC-SHA256` `AES-GCM` · CI ✅ · MIT
+
+> 两层能力：**① 接口返回值脱敏**（`@Sensitive` 注解，Jackson 序列化层不可逆掩码，业务零侵入）；**② 大模型输入输出脱敏**（可逆假名化，出站替换为确定性令牌、入站自动还原，让模型看得见上下文关联而看不见真实身份）。
+
+- **展示态序列化脱敏** — 支持身份证、手机号、姓名、邮箱、银行卡、地址、IP、自定义保留位数及数值/字符/UUID 标量；通过 `BeanPostProcessor` 幂等注册到容器内所有 `ObjectMapper`（即使应用自定义了 `ObjectMapper` Bean 也不会静默失效）
+- **128-bit 确定性假名化令牌** — `TYPE_v2_<32位十六进制>` 由 `HMAC-SHA256(密钥, 类型|版本|原文)` 生成（覆盖 15/18 位身份证、`+86`/连字符手机号、4 位分组银行卡）；不含原文、跨轮次稳定、无密钥不可伪造；碰撞时严格抛出 `TokenCollisionException`，绝不静默覆盖或混淆身份
+- **会话级隔离与加密文件保险库** — `ScopedTokenVault` 支持按会话隔离映射、TTL 过期、`forget(scope)` 整体撤销（拒绝控制字符防前缀撞键）及不含原文的 `RestoreAudit` 回调；内置 `EncryptedFileTokenVault` 提供 AES-GCM 文件锁持久化、原子替换、64 MiB 上限保护与密钥轮换
+- **模型调用装饰器与异常消毒** — `PseudonymizingChat` 封装"出站脱敏 → 模型调用 → 入站还原 → 异常消毒"闭环；当请求含敏感数据时自动清洗异常消息并剥离底层堆栈，防止 SDK 报错将客户明文打进日志
+
+**上手**：下载 [desensitize-spring-boot-starter.jar](https://github.com/XIAOXUsop/desensitize-spring-boot-starter/releases/latest) 安装到本地 Maven 仓库，在 DTO 字段或 getter 上添加 `@Sensitive` 即可。
+
+> 验证于提交 `b159feb`（2026-09-26，**115 项**单测与 `ApplicationContextRunner` 自动配置集成测试通过，测试条数由 CI 自动对账；v0.6.3 Release JAR 已下载实跑核验，内嵌 `jackson-bom` 显式钉在 `2.21.5`）。假名化不支持流式分片逐块还原（需在完整响应或分片边界还原）。
+
+### 🛡️ [aml-compliance-checker](https://github.com/XIAOXUsop/aml-compliance-checker) — IDEA 敏感数据合规检查插件
+
+`Kotlin` `IntelliJ Platform SDK` `PSI Static Analysis` · CI ✅ · Apache-2.0
+
+> 在代码编写阶段检测注释与字符串字面量中的身份证号、银行卡号、手机号、邮箱明文，给出可解释的置信度与判定依据，并支持 `Alt+Enter` **一键替换为等长脱敏值**。
+
+- **双信号可解释判定** — **信号一（值形态，高置信）**：18 位身份证过 ISO 7064 校验位、16–19 位银行卡过 Luhn 校验；**信号二（标识符语义，中置信）**：向上最多 3 层 PSI 提取变量/字段/参数名、方法调用名（如 `setIdCard(...)`）及成对实参键名（如 `Map.of("cardNo", ...)`），专门兜住校验位不合法的测试与 Mock 数据
+- **跨语言 PSI 扫描与安全预览** — 覆盖 Java 及 XML（如 MyBatis Mapper 注释与属性值）中的 `PsiComment`（含 Javadoc）与 `PsiLiteralValue`；告警信息仅显示短预览（如 `110************531`），防止告警面板本身泄漏完整敏感值；`DesensitizeFix` 通过 `WriteCommandAction` 原地等长替换
+
+**上手**：在 [Releases 页面](https://github.com/XIAOXUsop/aml-compliance-checker/releases/latest) 下载 `aml-compliance-checker-0.4.6.zip`，IDEA 中 `Settings → Plugins → ⚙ → Install Plugin from Disk` 即可。
+
+> 验证于提交 `e561ef1`（2026-10-07，**58 项**测试通过：30 项纯逻辑测试 + 28 项真实 IntelliJ PSI 与 QuickFix fixture 测试；0.4.6 公开 Release ZIP 已通过文件名、包内 JAR、`plugin.xml` 版本与修复提交祖先校验）。静态检查不覆盖动态字符串拼接、`.properties`/`.json` 等非 PSI 字面量文件及运行时数据。
+
+### 🌐 [letterpress](https://github.com/XIAOXUsop/letterpress) — 中文排版讲究、写给人和 AI 读的静态博客与知识编译系统
+
+`Astro 7` `TypeScript` `Content Negotiation` `LLM Wiki` · CI ✅ · MIT
+
+> 零配置起步，文章给人读，Markdown 给 AI 读；将中文 Web 排版规范、HTTP 内容协商与可验证的知识溯源编译进同一个纯静态站点。
+
+- **面向 AI 的内容协商与增量同步** — 内置 Cloudflare Pages / Netlify / Vercel 边缘函数垫片响应 `Accept: text/markdown`（处理 Claude Code 无 q 值顺序偏好、通配符与 `q=0` 拒绝），同一页面较 HTML 节省 **57.9% / 55.3%** 估算 token（`o200k_base` 真实词表复算为 **60.8% / 58.0%**）；构建期确定性产出 `/content-manifest.json`（含 SHA-256 与 JSON Schema 2020-12 校验）与 `/content.ndjson` 流式全量导出，附带可断点恢复的参考同步器
+- **讲究的中文排版与克制的前端负载** — 行高 `1.75`、行宽 `34em`（容器宽度稳定跟随字号）、原生 `text-autospace` 中西文间距、`line-break: strict`、禁用中文伪斜体；文章阅读页 **0 外链 JS**（首页仅 2.5 KB 内联；搜索页按需通过原生模块加载同源 Pagefind，无需 `unsafe-eval`，访问者实际加载 5 个 JS 共 gzip **93 KB**）
+- **知识层断链阻断与版本化溯源** — `[[方括号]]` 双向链接基于 Markdown AST 精确排除代码块，断链或同名标题歧义直接阻断构建；知识页结论绑定带日期规范版本的 `sources` 与正文摘要 `review.contentDigest`，修改正文或来源版本后未重新复核即触发 `review-stale` 阻断构建，机器出口同步携带新鲜度状态；提供 `wiki:ask`、`wiki:impact`、`wiki:review` CLI
+
+**上手**：`npm install && npm run dev` · 在线 Demo：[https://xiaoxusop.github.io/letterpress/](https://xiaoxusop.github.io/letterpress/)
+
+> 验证于提交 `094abbd`（2026-10-02，**568 项**离线单测、**201 项**构建产物契约、**23 条**检索金标、**32 步**门禁编排及跨时区 **107 个文件**逐字节可复现构建通过）。公开 Demo 托管在 GitHub Pages 上，受平台限制不支持自定义响应头，因此同 URL 的 `Accept: text/markdown` 内容协商与 `/content.ndjson` 的 MIME 类型需部署至 Cloudflare Pages / Netlify / Vercel 之一才生效。
 
 ## 工程习惯
 
-- **每个项目都配 CI + 单元测试 + 开源协议**，构建产物不进仓库
-- **可复现优先**：评测结果落盘 JSON，数据集带冻结标识与版本要素
-- **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力
-- **产物可获取**：**能打包成「一个文件」的四个项目**——`ctxpress`、`mcp-sentinel`、
-  `desensitize-spring-boot-starter`、`aml-compliance-checker`——都发 GitHub Release
-  并附一个可直接下载的文件。但**「一个文件」不等于「都能直接运行」**，实际分三种：
-  `ctxpress` 与 `mcp-sentinel` 是**可执行 jar**（`java -jar` 就跑）；
-  `desensitize` 是**库 jar**，下载后要 `mvn install:install-file` 装进本地仓库再当依赖用；
-  `aml-compliance-checker` 是 **IDEA 插件 zip**。
-  共同点是「下载就能用」比「clone 下来自己构建」的门槛低一个数量级。
-  另外三个不是这个形态，也都有 tag、`clone` 即用：`amlagent` 是全栈应用
-  （Docker + 前后端源码，没有"一个文件"可下）、`letterpress` 的产物是
-  [线上 Demo](https://xiaoxusop.github.io/letterpress/)、`fsc-examples` 是示例集。
-  <!-- 2026-09-19 核对：原文写的是「每个项目都发…并附可直接运行的产物」，
-       而按 API 查，amlagent(2 个 release)/letterpress(1)/fsc-examples(1) 的
-       assets 都是空的。改成分开写，免得访客十秒就查到反证。
-       2026-09-22 再收一次：「可直接运行的产物」对 desensitize 不成立——
-       它发的是库 jar，本节上面自己就写着要装进本地仓库才能用。 -->
+- **每个项目都配 CI + 单元测试 + 开源协议**，构建产物不进版本库
+- **可复现优先**：评测结果落盘 JSON，数据集带冻结标识与版本要素；发布包固定构建时间戳或输出 SHA-256 校验清单
+- **如实标注局限**：合成数据不等于生产准确率，调优集指标不等于泛化能力，平台与协议边界在文档首屏如实声明
+- **产物可获取**：按项目形态提供最低门槛的交付方式——
+  - **桌面安装包 / 免安装便携包**：`Pi-desktop`（Release 提供内置 Node/npm 运行时的 Windows `.exe` 安装程序、`.zip` 便携包与 `SHA256SUMS.txt`）
+  - **单文件可执行 JAR**：`ctxpress`、`mcp-sentinel`（Release 直接下载，`java -jar` 即可运行）
+  - **自包含 POM 的库 JAR**：`desensitize-spring-boot-starter`（Release 下载后两步安装至本地 Maven 仓库即可引用）
+  - **IDE 插件包**：`aml-compliance-checker`（Release 提供经版本与结构校验的 `.zip` 插件包，`Install Plugin from Disk` 即装即用）
+  - **确定性源码包 / 在线体验 / 离线全链路示例**：`ai-plugin-doctor`（提供带 `SOURCE_MANIFEST.json` 的可复现源码包）、`letterpress`（提供[线上 Demo](https://xiaoxusop.github.io/letterpress/) 与三平台边缘函数模板）、`amlagent`（Docker 基础设施 + Mock 模型离线可跑全栈闭环）、[fsc-examples](https://github.com/XIAOXUsop/fsc-examples)（零 API Key 离线可跑的 LangChain4j + MCP 金融合规示例集与双轨评测，MIT）
 
 ## GitHub 数据
-
-<!--
-  原先这里还有两张卡，来自 github-readme-stats 的公共实例：
-      /api?username=XIAOXUsop&show_icons=true&theme=synthwave...
-      /api/top-langs/?username=XIAOXUsop&layout=compact&theme=synthwave...
-
-  2026-09-19 移除：该公共实例**整站 503**——不只是这两张卡，
-  连它的裸首页、以及为其他用户（如 torvalds）生成的卡都返回 503，
-  所以这是服务级故障，不是账号或参数的问题。而同一份主页上的
-  streak-stats 与 capsule-render 都是 200，说明不是本机网络的问题。
-
-  它对带宽/速率限制一向紧张，属于这一类的已知代价。而下面那张
-  `github-metrics.svg` 是**本仓库自己的 Actions 生成并提交**的——
-  不依赖任何第三方实例，覆盖面还更全。所以这两张不是「没了」，
-  是被一张更可靠、信息更多的替代了。
-
-  若将来该公共实例恢复、而你仍想要那两张紧凑卡：把上面的两行 src 加回
-  `<p align="center">` 里即可（参数照抄注释即可复原）。
--->
 
 <div align="center">
   <img src="https://streak-stats.demolab.com?user=XIAOXUsop&locale=zh_CN&theme=synthwave&hide_border=true" alt="GitHub Streak"/>
